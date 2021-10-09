@@ -1,4 +1,9 @@
-body{
-    width: 250px;
-    height: 400px;
+body {
+  width: 250px;
+  height: 400px;
+}
+
+#btnSortAlph {
+  width: 40px;
+  height: 20px;
 }
