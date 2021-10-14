@@ -1,5 +1,19 @@
+document.getElementById("btnSort").onclick = function () {
+  // Prevents selection to go back to default value
+  event.preventDefault();
+  // Dropdown menu
+  var tabSelect = document.getElementById("tabSelect");
+
+  // Checks the selected value of dropdown menu
+  if (tabSelect.value == "Alphabetical") {
+    sortAlphabetical();
+  } else {
+    alert("Placeholder");
+  }
+};
+
 // Sorts tabs in alphabetical order
-document.getElementById("btnSortAlph").onclick = async function () {
+async function sortAlphabetical() {
   // Puts tabinfo into an array
   var tabs = await chrome.tabs.query({ currentWindow: true });
 
@@ -19,4 +33,4 @@ document.getElementById("btnSortAlph").onclick = async function () {
       }
     }
   }
-};
+}

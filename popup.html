@@ -8,8 +8,16 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <p>Sort tabs in alphabetical order</p>
-    <button id="btnSortAlph">Sort</button>
+    <form>
+      <label for="tabSelect">Select a sorting option:</label>
+      <select id="tabSelect">
+        <option value="Alphabetical">Alphabetical</option>
+        <option value="'Placeholder'">Placeholder</option>
+        <option value="Placeholder">Placeholder</option>
+      </select>
+
+      <button id="btnSort">Sort</button>
+    </form>
 
     <script src="./popup.js"></script>
   </body>

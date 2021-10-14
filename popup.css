@@ -3,7 +3,20 @@ body {
   height: 400px;
 }
 
-#btnSortAlph {
-  width: 40px;
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+#tabSelect {
+  margin-top: 5px;
+  margin-bottom: 5px;
   height: 20px;
+}
+
+#btnSort {
+  background-color: royalblue;
+  color: white;
+  border-style: none;
+  height: 25px;
 }
