@@ -1,22 +1,132 @@
 body {
   width: 250px;
-  height: 400px;
+  height: 510px;
 }
 
-form {
+/* flexbox */
+#form {
   display: flex;
   flex-direction: column;
 }
 
-#tabSelect {
-  margin-top: 5px;
-  margin-bottom: 5px;
+/* tabList */
+#tabDiv {
+  width: 246px;
+  height: 154px;
+  overflow: auto;
+  border: outset;
+}
+
+/* name input field */
+#inputName {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 75%;
   height: 20px;
 }
 
-#btnSort {
-  background-color: royalblue;
+/* Custom radio buttons */
+/* Customize the label (the container) */
+.container {
+  position: relative;
+  padding-left: 25px;
+}
+
+/* Hide the browser's default radio button */
+.container input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container .checkmark:after {
+  transform: translate(50%, 50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: white;
+}
+
+#grey {
+  background-color: #bdc1c6;
+}
+
+#blue {
+  background-color: #8ab4f8;
+}
+
+#red {
+  background-color: #f28b82;
+}
+
+#yellow {
+  background-color: #fdd663;
+}
+
+#green {
+  background-color: #81c995;
+}
+
+#pink {
+  background-color: #ff8bcb;
+}
+
+#purple {
+  background-color: #d7aefb;
+}
+
+#cyan {
+  background-color: #78d9ec;
+}
+
+/* labels for dropdown menus */
+label[for="groupSelect"],
+label[for="windowSelect"],
+label[for="sortSelect"] {
+  margin-top: 15px;
+}
+
+/* dropdown menus */
+.select {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  height: 25px;
+  width: 75%;
+}
+
+/* sorting buttons */
+.btn {
+  background-color: #1a73e8;
   color: white;
   border-style: none;
   height: 25px;
+  width: 75%;
+}
+
+.btn:hover {
+  background-color: #174ea6;
 }

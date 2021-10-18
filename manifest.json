@@ -31,7 +31,8 @@
         "activeTab",
         "tabs",
         "storage",
-        "scripting"
+        "scripting",
+        "tabGroups"
     ],
 
     "host_permissions": [

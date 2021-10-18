@@ -8,15 +8,73 @@
     <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <form>
-      <label for="tabSelect">Select a sorting option:</label>
-      <select id="tabSelect">
-        <option value="Alphabetical">Alphabetical</option>
-        <option value="'Placeholder'">Placeholder</option>
-        <option value="Placeholder">Placeholder</option>
-      </select>
+    <!--flexbox-->
+    <form id="form">
+      <!--tabList-->
+      <div id="tabDiv"></div>
 
-      <button id="btnSort">Sort</button>
+      <!--name input field-->
+      <input type="text" id="inputName" placeholder="Name" />
+
+      <!--radio buttons-->
+      <div>
+        <label class="container">
+          <input type="radio" name="color" checked="checked" />
+          <span class="checkmark" id="grey"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="blue"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="red"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="yellow"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="green"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="pink"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="purple"></span>
+        </label>
+        <label class="container">
+          <input type="radio" name="color" />
+          <span class="checkmark" id="cyan"></span>
+        </label>
+      </div>
+
+      <!--dropdown menus an their respective buttons-->
+      <label for="groupSelect">Group options:</label>
+      <select class="select" id="groupSelect">
+        <option value="addGroup">Add to new group</option>
+        <option value="'existingGroup'">Add to existing group</option>
+        <option value="removeGroup">Remove from group</option>
+      </select>
+      <button class="btn" id="btnGroup">Sort</button>
+
+      <label for="windowSelect">Window options:</label>
+      <select class="select" id="windowSelect">
+        <option value="addWindow">Add to new window</option>
+        <option value="'existingWindow'">Add to existing window</option>
+        <option value="removeWindow">Remove from window</option>
+      </select>
+      <button class="btn" id="btnWindow">Sort</button>
+
+      <label for="sortSelect">Sorting options:</label>
+      <select class="select" id="sortSelect">
+        <option value="titleSort">Sort by title</option>
+        <option value="'urlSort'">Sort by url</option>
+      </select>
+      <button class="btn" id="btnSort">Sort</button>
     </form>
 
     <script src="./popup.js"></script>
