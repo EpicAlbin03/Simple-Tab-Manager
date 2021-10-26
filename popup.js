@@ -15,9 +15,13 @@ async function start() {
     if (document.getElementById("groupSelect").value == "addGroup") {
       addGroup(tabs);
     } else if (document.getElementById("groupSelect").value == "existingGroup") {
-      existingGroup();
-    } else if (document.getElementById("groupSelect").value == "removeGroup") {
-      removeGroup();
+      existingGroup(tabs);
+    } else if (document.getElementById("groupSelect").value == "removeFromGroup") {
+      removeFromGroup(tabs);
+    } else if (document.getElementById("groupSelect").value == "ungroup") {
+      ungroup();
+    } else if (document.getElementById("groupSelect").value == "closeGroup") {
+      closeGroup();
     }
   };
 
@@ -96,18 +100,17 @@ function cbChecked(tabs) {
   return checkedTabIds;
 }
 
+// Return string from name input field
+function title() {
+  return document.getElementById("inputName").value;
+}
+
 async function addGroup(tabs) {
-  // Checks what tabs are selected
-  let checkedTabIds = cbChecked(tabs);
-
   // Creates new group with selected tabs
-  let newGroupId = await chrome.tabs.group({ tabIds: checkedTabIds[0] });
-  for (let i = 1; i < checkedTabIds.length; i++) {
-    chrome.tabs.group({ groupId: newGroupId, tabIds: checkedTabIds[i] });
+  let newGroupId = await chrome.tabs.group({ tabIds: cbChecked(tabs)[0] });
+  for (let i = 1; i < cbChecked(tabs).length; i++) {
+    chrome.tabs.group({ groupId: newGroupId, tabIds: cbChecked(tabs)[i] });
   }
-
-  // String from name input field
-  let name = document.getElementById("inputName").value;
 
   // Checks which radio button is selected and assigns the corresponding color
   let selectedColor;
@@ -118,12 +121,42 @@ async function addGroup(tabs) {
   });
 
   // Updates the group with selected title and color
-  chrome.tabGroups.update(newGroupId, { title: name, color: selectedColor });
+  chrome.tabGroups.update(newGroupId, { title: title(), color: selectedColor });
 }
 
-function existingGroup() {}
+async function existingGroup(tabs) {
+  // Puts the groups with the given title into an array
+  let group = await chrome.tabGroups.query({ title: title() });
 
-function removeGroup() {}
+  // Adds selected tabs to group
+  for (let i = 0; i < cbChecked(tabs).length; i++) {
+    chrome.tabs.group({ groupId: group[0].id, tabIds: cbChecked(tabs)[i] });
+  }
+}
+
+function removeFromGroup(tabs) {
+  // Removes selected tabs from group
+  for (let i = 0; i < cbChecked(tabs).length; i++) {
+    chrome.tabs.ungroup(cbChecked(tabs)[i]);
+  }
+}
+
+async function ungroup() {
+  // Puts the groups with the given title into an array
+  let group = await chrome.tabGroups.query({ title: title() });
+
+  // Puts tabinfo into an array (when passing "tabs" to "ungroup()", the tabs groupId didn't update correctly when put into a new group)
+  let tabs = await chrome.tabs.query({ currentWindow: true });
+
+  // Checks if the tabs groupIds match the given group id and ungroups them accordingly
+  for (let i = 0; i < tabs.length; i++) {
+    if (tabs[i].groupId == group[0].id) {
+      chrome.tabs.ungroup(tabs[i].id);
+    }
+  }
+}
+
+function closeGroup() {}
 
 function addWindow() {}
 
@@ -137,6 +170,7 @@ function titleSort(tabs) {
   for (let i = 0; i < tabs.length; i++) {
     titles.push(tabs[i].title);
   }
+
   // Sorts the array alphabetically
   titles.sort((a, b) => a.localeCompare(b));
 
