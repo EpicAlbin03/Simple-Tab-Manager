@@ -22,18 +22,8 @@ async function start() {
       ungroup();
     } else if (document.getElementById("groupSelect").value == "closeGroup") {
       closeGroup();
-    }
-  };
-
-  document.getElementById("btnWindow").onclick = function () {
-    event.preventDefault();
-
-    if (document.getElementById("windowSelect").value == "addWindow") {
-      addWindow();
-    } else if (document.getElementById("windowSelect").value == "existingWindow") {
-      existingWindow();
-    } else if (document.getElementById("windowSelect").value == "removeWindow") {
-      removeWindow();
+    } else if (document.getElementById("groupSelect").value == "addWindow") {
+      addWindow(tabs);
     }
   };
 
@@ -156,13 +146,27 @@ async function ungroup() {
   }
 }
 
-function closeGroup() {}
+async function closeGroup() {
+  // Puts the groups with the given title into an array
+  let group = await chrome.tabGroups.query({ title: title() });
 
-function addWindow() {}
+  // Puts tabinfo into an array (when passing "tabs" to "ungroup()", the tabs groupId didn't update correctly when put into a new group)
+  let tabs = await chrome.tabs.query({ currentWindow: true });
 
-function existingWindow() {}
+  // Checks if the tabs groupIds match the given group id and closes them accordingly
+  for (let i = 0; i < tabs.length; i++) {
+    if (tabs[i].groupId == group[0].id) {
+      chrome.tabs.remove(tabs[i].id);
+    }
+  }
+}
 
-function removeWindow() {}
+function addWindow(tabs) {
+  // Adds selected tabs to new window (Googles API:s doesn't have an option to rename windows)
+  for (let i = 0; i < cbChecked(tabs).length; i++) {
+    chrome.windows.create({ tabId: cbChecked(tabs)[i] });
+  }
+}
 
 function titleSort(tabs) {
   // Separates titles into a different array
