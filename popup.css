@@ -17,11 +17,15 @@ body {
   border: outset;
 }
 
+#flexbox {
+  display: flex;
+}
+
 /* name input field */
 #inputName {
   margin-top: 15px;
   margin-bottom: 15px;
-  width: 75%;
+  width: 50%;
   height: 20px;
 }
 
@@ -128,11 +132,25 @@ label[for="sortSelect"] {
   width: 75%;
 }
 
-.btn:hover {
+#urlCopy {
+  height: 25px;
+  width: 50%;
+  background-color: #1a73e8;
+  color: white;
+  border-style: none;
+  border-radius: 3px;
+  margin-top: 15px;
+  margin-left: 5px;
+}
+
+.btn:hover,
+#urlCopy:hover {
   background-color: #174ea6;
 }
 
 .btn:active,
-.btn:active:after {
+.btn:active:after,
+#urlCopy:active,
+#urlCopy:active:after {
   opacity: 0.5;
 }

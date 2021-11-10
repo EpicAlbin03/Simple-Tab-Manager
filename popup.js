@@ -6,6 +6,10 @@ async function start() {
 
   tabList(tabs);
 
+  document.getElementById("urlCopy").onclick = function () {
+    urlCopy(tabs);
+  };
+
   // Calls function when button is pressed
   document.getElementById("btnGroup").onclick = function () {
     // Prevents selection to go back to default value
@@ -75,6 +79,31 @@ function tabList(tabs) {
   }
 }
 
+// Copy tab urls to clipboard in a list
+function urlCopy(tabs) {
+  let urls = cbCheckedUrl(tabs);
+
+  let str = "";
+  for (let i = 0; i < urls.length; i++) {
+    str += urls[i] + "\n";
+  }
+
+  copyToClipboard(str);
+}
+
+function copyToClipboard(text) {
+  var dummy = document.createElement("textarea");
+  // to avoid breaking orgain page when copying more words
+  // cant copy when adding below this code
+  // dummy.style.display = 'none'
+  document.body.appendChild(dummy);
+  //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+  dummy.value = text;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+}
+
 // Checks which checkboxes are checked and returns the corresponding tabIds
 function cbChecked(tabs) {
   let i = 0;
@@ -88,6 +117,20 @@ function cbChecked(tabs) {
   });
 
   return checkedTabIds;
+}
+
+function cbCheckedUrl(tabs) {
+  let i = 0;
+  let checkedTabUrls = [];
+
+  [].forEach.call(document.querySelectorAll('input[type="checkbox"]'), function (cb) {
+    if (cb.checked) {
+      checkedTabUrls.push(tabs[i].url);
+    }
+    i++;
+  });
+
+  return checkedTabUrls;
 }
 
 // Return string from name input field
