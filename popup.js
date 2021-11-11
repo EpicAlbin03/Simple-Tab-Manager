@@ -1,3 +1,22 @@
+// Loads value from storage and assigns it to the dropdown menus
+chrome.storage.local.get(["selectedGroupOption", "selectedSortOption"], (data) => {
+  document.getElementById("groupSelect").value = data.selectedGroupOption;
+  document.getElementById("sortSelect").value = data.selectedSortOption;
+});
+
+// Saves current value of dropdown menus to storage when changed
+document.getElementById("groupSelect").addEventListener("change", function () {
+  chrome.storage.local.set({
+    selectedGroupOption: this.value,
+  });
+});
+
+document.getElementById("sortSelect").addEventListener("change", function () {
+  chrome.storage.local.set({
+    selectedSortOption: this.value,
+  });
+});
+
 start();
 
 async function start() {
@@ -50,6 +69,8 @@ function tabList(tabs) {
     titles.push(tabs[i].title);
   }
 
+  let height = 0;
+
   // Creates checkboxes for each tab
   for (let i = 0; i < titles.length; i++) {
     let checkbox = document.createElement("input");
@@ -59,12 +80,12 @@ function tabList(tabs) {
     checkbox.value = titles[i];
     checkbox.id = titles[i];
 
-    // Makes it so titles can be max 30 chars
+    // Makes it so titles can be max 35 chars
     let labelText;
-    if (titles[i].length <= 30) {
+    if (titles[i].length <= 35) {
       labelText = document.createTextNode(checkbox.id);
     } else {
-      let shortTitle = titles[i].slice(0, 30);
+      let shortTitle = titles[i].slice(0, 35);
       labelText = document.createTextNode(shortTitle);
     }
 
@@ -76,7 +97,19 @@ function tabList(tabs) {
     container.appendChild(checkbox);
     container.appendChild(newLabel);
     container.appendChild(br);
+
+    if (height < 160) {
+      height += 20;
+    }
   }
+
+  // Increases height of tabDiv depending on the amount of open tabs
+  let strTabDiv = height + "px";
+  let tabDiv = document.getElementById("tabDiv");
+  tabDiv.style.height = strTabDiv;
+
+  // Increases height of body depending on the amount of open tabs
+  document.body.style.height = height + 260 + "px";
 }
 
 // Copy tab urls to clipboard in a list

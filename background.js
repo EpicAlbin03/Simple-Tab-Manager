@@ -2,12 +2,10 @@
 chrome.runtime.onInstalled.addListener(() => {
   // Save variables in storage (default values)
   chrome.storage.local.set({
-    example: "example",
+    selectedGroupOption: "addGroup",
+    selectedSortOption: "titleSort",
   });
 });
-
-// Load variables from storage
-chrome.storage.local.get("example", (data) => {});
 
 // Runs foreground.js when new http or https website is opened
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

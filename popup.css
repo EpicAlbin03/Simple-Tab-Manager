@@ -1,6 +1,7 @@
 body {
   width: 250px;
-  height: 420px;
+  /* Height changes in js depending on the amount of open tabs */
+  height: 0px;
 }
 
 /* flexbox */
@@ -12,9 +13,9 @@ body {
 /* tabList */
 #tabDiv {
   width: 246px;
-  height: 154px;
+  /* Height changes in js depending on the amount of open tabs */
+  height: 0px;
   overflow: auto;
-  border: outset;
 }
 
 #flexbox {
