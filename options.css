@@ -1,5 +1,53 @@
 body {
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  margin: 0;
+}
+
+.padded-title {
+  padding-top: 12px;
+}
+
+/*
+.table th,
+.table td {
+  border-top: none !important;
+}
+*/
+
+.sidebar .nav-link {
+  font-weight: 500;
+  color: #333;
+}
+
+.sidebar .nav-link.active {
+  color: #007bff;
+}
+
+.setting-group {
+  position: relative;
+  padding: 1rem;
+  margin: 1rem 0 0;
+  border: solid #f1f4f6;
+  border-radius: 4px 4px 0 0;
+  box-sizing: border-box;
+  width: fit-content;
+}
+
+/*
+.code {
+  background-color: #eee;
+  border: 1px solid #999;
+  display: block;
+  padding: 10px;
+}
+
+mark {
+  background-color: yellow;
+  color: black;
+}
+*/
+
+#inputTime {
+  width: 400px;
 }

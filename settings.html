@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tab Sorter: Settings</title>
+    <link rel="stylesheet" href="./css/bootstrap.css">
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <!-- Grey container + Tab Sorter title -->
+    <div class="container bg-light d-flex align-items-center">
+      <img src="./images/icon-32x32.png" class="img-fluid p-2">
+      <h3 class="navbar-brand h3 p-2">Tab Sorter</h3>
+    </div>
+
+    <!-- Nav / Sidebar -->
+    <div class="container">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Settings</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="userguide.html">User Guide</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="about.html">About</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <!-- Content form -->
+        <main role="main" class="col-md-9 ml-md-auto col-lg-10 px-4">
+          <form class="justify-content-start">
+            <!-- Settings title -->
+            <h3 class="padded-title">Settings</h3>
+
+            <!-- Auto-sort (group) -->
+            <div class="setting-group">
+              <!-- Automatically sort tabs (checkbox) -->
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                <label class="form-check-label" for="flexCheckDefault">Automatically sort tabs</label>
+              </div>
+              <!-- Time between sorting - inputs -->
+              <label for="inputTime">Time between sorting:</label>
+              <div class="input-group" id="inputTime">
+                <span class="input-group-text">Sec</span>
+                <input type="number" class="form-control" placeholder="0" min="0" />
+                <span class="input-group-text">Min</span>
+                <input type="number" class="form-control" placeholder="0" min="0" />
+                <span class="input-group-text">Hour</span>
+                <input type="number" class="form-control" placeholder="0" min="0" />
+              </div>
+            </div>
+
+            <!-- Grouping options (group) -->
+            <div class="setting-group mb-3">
+              <!-- Group from (dropdown) -->
+              <div class="form-group mb-3">
+                <label for="selectGrouping">
+                  Group from:
+                  <select class="form-select" id="selectGrouping">
+                    <option value="leftToRight">Left to Right</option>
+                    <option value="rightToLeft">Right to Left</option>
+                  </select>
+                </label>
+              </div>
+              <!-- Preserve order within groups (checkbox) -->
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="preserveGroupOrder" />
+                <label class="form-check-label" for="preserveGroupOrder">Preserve order within groups</label>
+              </div>
+            </div>
+
+            <!-- Save button -->
+            <button id="save" class="btn btn-primary" type="submit">Save</button>
+          </form>
+        </main>
+      </div>
+    </div>
+
+    <script src="./js/bootstrap.js"></script>
+    <script src="./options.js"></script>
+  </body>
+</html>
