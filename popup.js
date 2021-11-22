@@ -1,19 +1,14 @@
-// Loads value from storage and assigns it to the dropdown menus
+// Loads values from storage and assigns it to the dropdown menus
 chrome.storage.sync.get(["groupOption", "sortOption"], (data) => {
   document.getElementById("groupSelect").value = data.groupOption;
   document.getElementById("sortSelect").value = data.sortOption;
 });
 
-// Saves current value of dropdown menus to storage when changed
-document.getElementById("groupSelect").addEventListener("change", function () {
+// Saves current values of dropdown menus to storage when changed
+document.body.addEventListener("change", function () {
   chrome.storage.sync.set({
-    groupOption: this.value,
-  });
-});
-
-document.getElementById("sortSelect").addEventListener("change", function () {
-  chrome.storage.sync.set({
-    sortOption: this.value,
+    groupOption: document.getElementById("groupSelect").value,
+    sortOption: document.getElementById("sortSelect").value,
   });
 });
 
@@ -112,7 +107,7 @@ function tabList(tabs) {
   document.body.style.height = height + 260 + "px";
 }
 
-// Copy tab urls to clipboard in a list
+// Copies urls of checked tabs to clipboard in form of a list
 function urlCopy(tabs) {
   let urls = cbCheckedUrl(tabs);
 
@@ -124,13 +119,10 @@ function urlCopy(tabs) {
   copyToClipboard(str);
 }
 
+// Copies string to clipboard
 function copyToClipboard(text) {
   var dummy = document.createElement("textarea");
-  // to avoid breaking orgain page when copying more words
-  // cant copy when adding below this code
-  // dummy.style.display = 'none'
   document.body.appendChild(dummy);
-  //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
   dummy.value = text;
   dummy.select();
   document.execCommand("copy");
@@ -152,6 +144,7 @@ function cbChecked(tabs) {
   return checkedTabIds;
 }
 
+// Checks which checkboxes are checked and returns the corresponding tabUrls
 function cbCheckedUrl(tabs) {
   let i = 0;
   let checkedTabUrls = [];
@@ -211,7 +204,7 @@ async function ungroup() {
   // Puts the groups with the given title into an array
   let group = await chrome.tabGroups.query({ title: title() });
 
-  // Puts tabinfo into an array (when passing "tabs" to "ungroup()", the tabs groupId didn't update correctly when put into a new group)
+  // Puts tabinfo into an array (doesn't preserve order within groups)
   let tabs = await chrome.tabs.query({ currentWindow: true });
 
   // Checks if the tabs groupIds match the given group id and ungroups them accordingly
@@ -226,7 +219,7 @@ async function closeGroup() {
   // Puts the groups with the given title into an array
   let group = await chrome.tabGroups.query({ title: title() });
 
-  // Puts tabinfo into an array (when passing "tabs" to "ungroup()", the tabs groupId didn't update correctly when put into a new group)
+  // Puts tabinfo into an array
   let tabs = await chrome.tabs.query({ currentWindow: true });
 
   // Checks if the tabs groupIds match the given group id and closes them accordingly
