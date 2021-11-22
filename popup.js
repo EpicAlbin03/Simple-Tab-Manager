@@ -1,19 +1,19 @@
 // Loads value from storage and assigns it to the dropdown menus
-chrome.storage.local.get(["selectedGroupOption", "selectedSortOption"], (data) => {
-  document.getElementById("groupSelect").value = data.selectedGroupOption;
-  document.getElementById("sortSelect").value = data.selectedSortOption;
+chrome.storage.sync.get(["groupOption", "sortOption"], (data) => {
+  document.getElementById("groupSelect").value = data.groupOption;
+  document.getElementById("sortSelect").value = data.sortOption;
 });
 
 // Saves current value of dropdown menus to storage when changed
 document.getElementById("groupSelect").addEventListener("change", function () {
-  chrome.storage.local.set({
-    selectedGroupOption: this.value,
+  chrome.storage.sync.set({
+    groupOption: this.value,
   });
 });
 
 document.getElementById("sortSelect").addEventListener("change", function () {
-  chrome.storage.local.set({
-    selectedSortOption: this.value,
+  chrome.storage.sync.set({
+    sortOption: this.value,
   });
 });
 

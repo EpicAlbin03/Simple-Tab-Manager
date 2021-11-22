@@ -44,18 +44,18 @@
             <div class="setting-group">
               <!-- Automatically sort tabs (checkbox) -->
               <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                <label class="form-check-label" for="flexCheckDefault">Automatically sort tabs</label>
+                <input class="form-check-input" type="checkbox" id="autoSort" />
+                <label class="form-check-label" for="autoSort">Automatically sort tabs</label>
               </div>
               <!-- Time between sorting - inputs -->
               <label for="inputTime">Time between sorting:</label>
               <div class="input-group" id="inputTime">
                 <span class="input-group-text">Sec</span>
-                <input type="number" class="form-control" placeholder="0" min="0" />
+                <input type="number" class="form-control" id="autoSortSec" placeholder="0" min="0" disabled />
                 <span class="input-group-text">Min</span>
-                <input type="number" class="form-control" placeholder="0" min="0" />
-                <span class="input-group-text">Hour</span>
-                <input type="number" class="form-control" placeholder="0" min="0" />
+                <input type="number" class="form-control" id="autoSortMin" placeholder="0" min="0" disabled />
+                <span class="input-group-text">Hours</span>
+                <input type="number" class="form-control" id="autoSortHours" placeholder="0" min="0" disabled />
               </div>
             </div>
 
@@ -79,7 +79,7 @@
             </div>
 
             <!-- Save button -->
-            <button id="save" class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-primary" type="submit">Save</button>
           </form>
         </main>
       </div>
