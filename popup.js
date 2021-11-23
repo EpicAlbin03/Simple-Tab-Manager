@@ -1,18 +1,22 @@
-// Loads values from storage and assigns it to the dropdown menus
-chrome.storage.sync.get(["groupOption", "sortOption"], (data) => {
-  document.getElementById("groupSelect").value = data.groupOption;
-  document.getElementById("sortSelect").value = data.sortOption;
-});
+let page = window.location.pathname.split("/").pop();
 
-// Saves current values of dropdown menus to storage when changed
-document.body.addEventListener("change", function () {
-  chrome.storage.sync.set({
-    groupOption: document.getElementById("groupSelect").value,
-    sortOption: document.getElementById("sortSelect").value,
+if (page == "popup.html") {
+  // Loads values from storage and assigns it to the dropdown menus
+  chrome.storage.sync.get(["groupOption", "sortOption"], (data) => {
+    document.getElementById("groupSelect").value = data.groupOption;
+    document.getElementById("sortSelect").value = data.sortOption;
   });
-});
 
-start();
+  // Saves current values of dropdown menus to storage when changed
+  document.body.addEventListener("change", function () {
+    chrome.storage.sync.set({
+      groupOption: document.getElementById("groupSelect").value,
+      sortOption: document.getElementById("sortSelect").value,
+    });
+  });
+
+  start();
+}
 
 async function start() {
   // Puts tabinfo into an array
