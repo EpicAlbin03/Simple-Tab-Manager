@@ -61,26 +61,16 @@ function toggleInputTime() {
 }
 
 // Calls the correct function depending on the settings
-function callFunctions() {
+async function callFunctions() {
+  let tabs = await chrome.tabs.query({ currentWindow: true });
+
   if (elAutoSort.checked) {
-    autoSort();
-  }
-
-  chrome.storage.sync.get(["selectGrouping"], (data) => {
-    if (elSelectGrouping != data.selectGrouping) {
-      selectGrouping();
-    }
-  });
-
-  if (elPreserveGroupOrder.checked) {
-    preserveGroupOrder();
+    autoSort(tabs);
   }
 }
 
 // Automatically sorts tabs by title or url after [x] amount of time (settings page needs to stay open)
-async function autoSort() {
-  let tabs = await chrome.tabs.query({ currentWindow: true });
-
+function autoSort(tabs) {
   chrome.storage.sync.get(["autoSortSec", "autoSortMin", "autoSortHours"], (data) => {
     // Converts sec, min and hours to milliseconds and adds them together
     let sec = data.autoSortSec * 1000;
@@ -106,7 +96,3 @@ async function autoSort() {
     }, time);
   });
 }
-
-function selectGrouping() {}
-
-function preserveGroupOrder() {}
