@@ -3,17 +3,15 @@ let elAutoSort = document.getElementById("autoSort");
 let elAutoSortSec = document.getElementById("autoSortSec");
 let elAutoSortMin = document.getElementById("autoSortMin");
 let elAutoSortHours = document.getElementById("autoSortHours");
-let elSelectGrouping = document.getElementById("selectGrouping");
 let elPreserveGroupOrder = document.getElementById("preserveGroupOrder");
 var timerRef;
 
 // Loads values from storage and assigns it to settings
-chrome.storage.sync.get(["autoSort", "autoSortSec", "autoSortMin", "autoSortHours", "selectGrouping", "preserveGroupOrder"], (data) => {
+chrome.storage.sync.get(["autoSort", "autoSortSec", "autoSortMin", "autoSortHours", "preserveGroupOrder"], (data) => {
   elAutoSort.checked = data.autoSort;
   elAutoSortSec.value = data.autoSortSec;
   elAutoSortMin.value = data.autoSortMin;
   elAutoSortHours.value = data.autoSortHours;
-  elSelectGrouping.value = data.selectGrouping;
   elPreserveGroupOrder.checked = data.preserveGroupOrder;
 
   toggleInputTime();
@@ -33,7 +31,6 @@ document.getElementById("save").onclick = function () {
     autoSortSec: elAutoSortSec.value,
     autoSortMin: elAutoSortMin.value,
     autoSortHours: elAutoSortHours.value,
-    selectGrouping: elSelectGrouping.value,
     preserveGroupOrder: elPreserveGroupOrder.checked,
   });
 
@@ -62,15 +59,13 @@ function toggleInputTime() {
 
 // Calls the correct function depending on the settings
 async function callFunctions() {
-  let tabs = await chrome.tabs.query({ currentWindow: true });
-
   if (elAutoSort.checked) {
-    autoSort(tabs);
+    autoSort();
   }
 }
 
 // Automatically sorts tabs by title or url after [x] amount of time (settings page needs to stay open)
-function autoSort(tabs) {
+function autoSort() {
   chrome.storage.sync.get(["autoSortSec", "autoSortMin", "autoSortHours"], (data) => {
     // Converts sec, min and hours to milliseconds and adds them together
     let sec = data.autoSortSec * 1000;
@@ -87,9 +82,9 @@ function autoSort(tabs) {
         if (data.autoSort == true && (sec > 0 || min > 0 || hours > 0)) {
           // Checks if titleSort or urlSort is selected, then calls the function from popup.js
           if (data.sortOption == "titleSort") {
-            titleSort(tabs);
+            titleSort();
           } else if (data.sortOption == "urlSort") {
-            urlSort(tabs);
+            urlSort();
           }
         }
       });

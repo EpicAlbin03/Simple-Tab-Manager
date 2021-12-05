@@ -30,7 +30,7 @@
     "open_in_tab": true
   },
 
-  "permissions": ["activeTab", "tabs", "storage", "scripting", "tabGroups"],
+  "permissions": ["activeTab", "tabs", "storage", "tabGroups"],
 
   "host_permissions": ["<all_urls>"]
 }
