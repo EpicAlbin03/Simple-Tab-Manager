@@ -50,23 +50,55 @@
             <!-- General Usage & Behavior -->
             <h4>General Usage & Behavior</h4>
             <p>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vero adipisci modi laudantium quaerat rerum cupiditate fuga, ipsum fugiat veniam,
-              repudiandae quam incidunt libero animi voluptas laborum quos. Suscipit deleniti architecto odit debitis repellat possimus dolor sint non
-              perferendis numquam doloremque veritatis ullam eveniet in mollitia pariatur sequi ea, praesentium inventore iure? Earum tenetur fuga minus
-              deserunt architecto, rem quisquam autem quo sunt minima repellendus asperiores et numquam alias? Adipisci itaque id asperiores fugiat expedita,
-              modi reprehenderit, omnis corporis vel dignissimos sit tempora officiis cum. Natus aperiam officiis fugit eveniet expedita ratione ipsam itaque
-              mollitia sint culpa, facere tempore eligendi nemo.
+              Please note that all settings are global, so any changes you save will be applied to all open windows. Similarly, the selected sorting options will also be
+              saved and automatically applied when opening the extension again.
             </p>
 
-            <!-- Settings Explained -->
-            <h4>Settings Explained</h4>
+            <!-- Copy urls -->
+            <h6>Copy urls</h6>
+            <p>Copies the urls of the selected tabs to clipboard in form of a list.</p>
+
+            <!-- Grouping options -->
+            <h4>Grouping options</h4>
+            <h6>Add to new group</h6>
+            <p>Selected tabs will be added to a new group. (Name and color is optional.)</p>
+            <h6>Add to existing group</h6>
+            <p>Specify the name of the group and the selected tabs will be added to that group.</p>
+            <h6>Remove from group</h6>
+            <p>Specify the name of the group and the selected tabs will be removed from that group.</p>
+            <h6>Ungroup</h6>
+            <p>Specify the name of the group and that group will be ungrouped. (The group will be removed but the tabs will stay intact.)</p>
+            <h6>Close group</h6>
+            <p>Specify the name of the group and that group will be closed. (The group, along with the tabs, will be removed.)</p>
+            <h6>Add to new window</h6>
+            <p>Selected tabs will be added to a new window. (Name is unavailable.)</p>
+
+            <!-- Sorting options -->
+            <h4>Sorting options</h4>
+            <h6>Sort by title</h6>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut, fuga! Ea fugiat inventore numquam, at veniam ad. Ex incidunt ullam veritatis. Aut
-              deserunt numquam debitis facilis placeat. Consectetur, natus recusandae. Eum at nam id maxime, dolores, nobis autem sunt modi, facere architecto
-              voluptate soluta eos nesciunt! Optio ipsa velit quaerat a ut, eum quas, voluptatem accusamus ea excepturi enim? Autem aut nemo, accusantium
-              excepturi nesciunt distinctio odio praesentium, quaerat adipisci sint temporibus aspernatur reprehenderit ea, laudantium sapiente? Adipisci sint
-              nisi qui illo atque recusandae exercitationem excepturi, temporibus commodi quasi cumque tempora magnam sequi ratione, ut dolores? Mollitia
-              similique voluptatum illo.
+              Sorts all tabs in the current window alphabetically by their titles. (Tabs within groups will be unaffected if "Preserve order within groups"
+              option is checked.)
+            </p>
+            <h6>Sort by url</h6>
+            <p>
+              Sorts all tabs in the current window alphabetically by their url. The tabs will be sorted by their hostnames excluding things like "www". See
+              example down below. (Tabs within groups will be unaffected if "Preserve order within groups" option is checked.)
+            </p>
+            <div class="code mb-3">https://www.<mark>youtube.com</mark>/feed/subscriptions</div>
+
+            <!-- Settings -->
+            <h4>Settings</h4>
+            <h6>Automatically sort tabs</h6>
+            <p>
+              All tabs in the current window will be automatically sorted after the currently selected sorting option (title or url) after [x] amount of time.
+              For example if sec = 30, the tabs will be sorted every 30 seconds. Please note that at least one of "sec", "min" or "hours" has to be > 0.
+            </p>
+            <h6>Preserve order within groups</h6>
+            <p>
+              If this option is checked, groups will be unaffected by sorting. All groups will be moved to the left most positions and be sorted in alphabetical
+              order. All tabs within groups will remain in the same order while the rest of the tabs will be sorted normally. If this option is unchecked,
+              groups won't be accounted for when sorting and will most likely ungroup tabs.
             </p>
           </div>
         </main>
