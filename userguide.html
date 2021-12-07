@@ -11,13 +11,13 @@
   </head>
   <body>
     <!-- Grey container + Tab Sorter title -->
-    <div class="container bg-light d-flex align-items-center">
+    <div class="container bg-light d-flex align-items-center width">
       <img src="./images/icon-32x32.png" class="img-fluid p-2" />
       <h3 class="navbar-brand h3 p-2">Tab Sorter</h3>
     </div>
 
     <!-- Nav / Sidebar -->
-    <div class="container">
+    <div class="container width">
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
@@ -59,36 +59,36 @@
             <p>Copies the urls of the selected tabs to clipboard in form of a list.</p>
 
             <!-- Grouping options -->
-            <h4>Grouping options</h4>
+            <h4 class="pt-2">Grouping options</h4>
             <h6>Add to new group</h6>
-            <p>Selected tabs will be added to a new group. (Name and color is optional.)</p>
+            <p>Selected tabs will be added to a new group. Name and color is optional.</p>
             <h6>Add to existing group</h6>
             <p>Specify the name of the group and the selected tabs will be added to that group.</p>
             <h6>Remove from group</h6>
             <p>Specify the name of the group and the selected tabs will be removed from that group.</p>
             <h6>Ungroup</h6>
-            <p>Specify the name of the group and that group will be ungrouped. (The group will be removed but the tabs will stay intact.)</p>
+            <p>Specify the name of the group and that group will be ungrouped. The group will be removed but the tabs will stay intact.</p>
             <h6>Close group</h6>
-            <p>Specify the name of the group and that group will be closed. (The group, along with the tabs, will be removed.)</p>
+            <p>Specify the name of the group and that group will be closed. The group, along with the tabs, will be removed.</p>
             <h6>Add to new window</h6>
-            <p>Selected tabs will be added to a new window. (Name is unavailable.)</p>
+            <p>Selected tabs will be added to a new window. Name is unavailable.</p>
 
             <!-- Sorting options -->
-            <h4>Sorting options</h4>
+            <h4 class="pt-2">Sorting options</h4>
             <h6>Sort by title</h6>
             <p>
-              Sorts all tabs in the current window alphabetically by their titles. (Tabs within groups will be unaffected if "Preserve order within groups"
-              option is checked.)
+              Sorts all tabs in the current window alphabetically by their titles. Tabs within groups will be unaffected if "Preserve order within groups"
+              option is checked.
             </p>
             <h6>Sort by url</h6>
             <p>
-              Sorts all tabs in the current window alphabetically by their url. The tabs will be sorted by their hostnames excluding things like "www". See
-              example down below. (Tabs within groups will be unaffected if "Preserve order within groups" option is checked.)
+              Sorts all tabs in the current window alphabetically by their url. The tabs will be sorted by their hostname excluding things like "www" (see
+              example below). Tabs within groups will be unaffected if "Preserve order within groups" option is checked.
             </p>
             <div class="code mb-3">https://www.<mark>youtube.com</mark>/feed/subscriptions</div>
 
             <!-- Settings -->
-            <h4>Settings</h4>
+            <h4 class="pt-2">Settings</h4>
             <h6>Automatically sort tabs</h6>
             <p>
               All tabs in the current window will be automatically sorted after the currently selected sorting option (title or url) after [x] amount of time.

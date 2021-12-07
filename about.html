@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tab Sorter: About</title>
+    <link rel="stylesheet" href="./css/bootstrap.css" />
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <!-- Grey container + Tab Sorter title -->
+    <div class="container bg-light d-flex align-items-center width">
+      <img src="./images/icon-32x32.png" class="img-fluid p-2" />
+      <h3 class="navbar-brand h3 p-2">Tab Sorter</h3>
+    </div>
+
+    <!-- Nav / Sidebar -->
+    <div class="container width">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link" href="settings.html">Settings</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="userguide.html">User Guide</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">About</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div class="justify-content-start">
+            <!-- About title -->
+            <h3 class="padded-title">About</h3>
+
+            <!-- Version and Github -->
+            <div class="d-flex">
+              <div>
+                <p>
+                  Version: <br />
+                  Github: <br />
+                  Rate us:
+                </p>
+              </div>
+              <div class="ps-5">
+                <p>
+                  <!-- TODO: get version with js -->
+                  0.1.0 <br />
+                  <a href="https://github.com/EpicAlbin03/Tab-Sorter.git" target="blank">https://github.com/EpicAlbin03/Tab-Sorter.git</a> <br />
+                  <a href="#">future link</a>
+                </p>
+              </div>
+            </div>
+
+            <!-- Submit a bug or feature request -->
+            <p class="pt-2">
+              You can
+              <a href="https://github.com/EpicAlbin03/Tab-Sorter/issues" target="blank">submit a bug or a feature request</a> if you have issues with, or
+              suggestions for, this extension. Please check to see if your idea or issue already exists before submitting anything.
+            </p>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="./js/bootstrap.js"></script>
+    <script src="./popup.js"></script>
+  </body>
+</html>
