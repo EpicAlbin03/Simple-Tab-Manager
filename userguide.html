@@ -39,8 +39,7 @@
         <main role="main" class="col-md-9 ml-md-auto col-lg-10 px-4">
           <div class="justify-content-start">
             <!-- User guide title -->
-            <!-- TODO: get version with js -->
-            <h3 class="padded-title mb-3">User Guide (v0.1.0)</h3>
+            <h3 class="padded-title mb-3">User Guide (<span id="version"></span>)</h3>
 
             <!-- Yellow alert -->
             <div class="alert alert-warning" role="alert">
@@ -50,8 +49,8 @@
             <!-- General Usage & Behavior -->
             <h4>General Usage & Behavior</h4>
             <p>
-              Please note that all settings are global, so any changes you save will be applied to all open windows. Similarly, the selected sorting options will also be
-              saved and automatically applied when opening the extension again.
+              Please note that all settings are global, so any changes you save will be applied to all open windows. Similarly, the selected sorting options
+              will also be saved and automatically applied when opening the extension again.
             </p>
 
             <!-- Copy urls -->
@@ -106,5 +105,6 @@
     </div>
 
     <script src="./js/bootstrap.js"></script>
+    <script src="./version.js"></script>
   </body>
 </html>

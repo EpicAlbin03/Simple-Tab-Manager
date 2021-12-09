@@ -133,6 +133,7 @@ label[for="sortSelect"] {
   width: 75%;
 }
 
+/* urlCopy button */
 #urlCopy {
   height: 25px;
   width: 50%;
@@ -144,11 +145,13 @@ label[for="sortSelect"] {
   margin-left: 5px;
 }
 
+/* button hover-effects */
 .btn:hover,
 #urlCopy:hover {
   background-color: #174ea6;
 }
 
+/* more button-effects */
 .btn:active,
 .btn:active:after,
 #urlCopy:active,
