@@ -13,11 +13,14 @@
       <!--tabList-->
       <div id="tabDiv"></div>
 
-      <!--name input field-->
-      <div id="flexbox">
-        <input type="text" id="inputName" placeholder="Name" />
-        <button id="urlCopy">Copy Urls</button>
+      <!-- selectAll and copyUrls buttons -->
+      <div class="flexbox">
+        <button type="button" class="btn btnTop" id="selectAll">Select All</button>
+        <button type="button" class="btn btnTop" id="urlCopy">Copy Urls</button>
       </div>
+
+      <!--name input field-->
+      <input type="text" id="inputName" placeholder="Name" />
 
       <!--radio buttons-->
       <div>
@@ -65,14 +68,14 @@
         <option value="closeGroup">Close group</option>
         <option value="addWindow">Add to new window</option>
       </select>
-      <button class="btn" id="btnGroup">Group</button>
+      <button type="button" class="btn" id="btnGroup">Group</button>
 
       <label for="sortSelect">Sorting options:</label>
       <select class="select" id="sortSelect">
         <option value="titleSort">Sort by title</option>
         <option value="urlSort">Sort by url</option>
       </select>
-      <button class="btn" id="btnSort">Sort</button>
+      <button type="button" class="btn" id="btnSort">Sort</button>
     </form>
 
     <script src="./popup.js"></script>

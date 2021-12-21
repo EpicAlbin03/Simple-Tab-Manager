@@ -4,16 +4,16 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tab Sorter: User Guide</title>
+    <title>Simple Tab Manager: User Guide</title>
     <link rel="stylesheet" href="./css/bootstrap.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" rel="stylesheet" />
     <link rel="stylesheet" href="options.css" />
   </head>
   <body>
-    <!-- Grey container + Tab Sorter title -->
+    <!-- Grey container + Tab Manager title -->
     <div class="container bg-light d-flex align-items-center width">
       <img src="./images/icon-32x32.png" class="img-fluid p-2" />
-      <h3 class="navbar-brand h3 p-2">Tab Sorter</h3>
+      <h3 class="navbar-brand h3 p-2">Simple Tab Manager</h3>
     </div>
 
     <!-- Nav / Sidebar -->
@@ -53,8 +53,12 @@
               will also be saved and automatically applied when opening the extension again.
             </p>
 
-            <!-- Copy urls -->
-            <h6>Copy urls</h6>
+            <!-- Select All -->
+            <h6>Select All</h6>
+            <p>Selects all tabs. If all tabs are selected then unselect all of them.</p>
+
+            <!-- Copy Urls -->
+            <h6>Copy Urls</h6>
             <p>Copies the urls of the selected tabs to clipboard in form of a list.</p>
 
             <!-- Grouping options -->
@@ -66,9 +70,9 @@
             <h6>Remove from group</h6>
             <p>Specify the name of the group and the selected tabs will be removed from that group.</p>
             <h6>Ungroup</h6>
-            <p>Specify the name of the group and that group will be ungrouped. The group will be removed but the tabs will stay intact.</p>
+            <p>Specify the name of the group and all groups with that name will be ungrouped. The groups will be removed but the tabs will stay intact.</p>
             <h6>Close group</h6>
-            <p>Specify the name of the group and that group will be closed. The group, along with the tabs, will be removed.</p>
+            <p>Specify the name of the group and all groups with that name will be closed. The groups, along with the tabs, will be removed.</p>
             <h6>Add to new window</h6>
             <p>Selected tabs will be added to a new window. Name is unavailable.</p>
 
@@ -77,12 +81,12 @@
             <h6>Sort by title</h6>
             <p>
               Sorts all tabs in the current window alphabetically by their titles. Tabs within groups will be unaffected if "Preserve order within groups"
-              option is checked.
+              option is selected.
             </p>
             <h6>Sort by url</h6>
             <p>
-              Sorts all tabs in the current window alphabetically by their url. The tabs will be sorted by their hostname excluding things like "www" (see
-              example below). Tabs within groups will be unaffected if "Preserve order within groups" option is checked.
+              Sorts all tabs in the current window alphabetically by their urls. The tabs will be sorted by their hostname excluding things like "www" (see
+              example below). Tabs within groups will be unaffected if "Preserve order within groups" option is selected.
             </p>
             <div class="code mb-3">https://www.<mark>youtube.com</mark>/feed/subscriptions</div>
 
@@ -95,9 +99,9 @@
             </p>
             <h6>Preserve order within groups</h6>
             <p>
-              If this option is checked, groups will be unaffected by sorting. All groups will be moved to the left most positions and be sorted in alphabetical
-              order. All tabs within groups will remain in the same order while the rest of the tabs will be sorted normally. If this option is unchecked,
-              groups won't be accounted for when sorting and will most likely ungroup tabs.
+              If this option is selected, groups will be unaffected by sorting. All groups will be moved to the left most positions and be sorted in
+              alphabetical order. All tabs within groups will remain in the same order while the rest of the tabs will be sorted normally. If this option is
+              unselected, groups won't be accounted for when sorting and will most likely ungroup tabs.
             </p>
           </div>
         </main>

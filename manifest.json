@@ -1,6 +1,6 @@
 {
-  "name": "Tab Sorter",
-  "description": "description",
+  "name": "Simple Tab Manager",
+  "description": "Simple tab manager that allows you to easily group and sort tabs.",
   "version": "0.1.0",
   "manifest_version": 3,
 
@@ -30,7 +30,5 @@
     "open_in_tab": true
   },
 
-  "permissions": ["activeTab", "tabs", "storage", "tabGroups"],
-
-  "host_permissions": ["<all_urls>"]
+  "permissions": ["activeTab", "tabs", "storage", "tabGroups"]
 }

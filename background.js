@@ -8,6 +8,6 @@ chrome.runtime.onInstalled.addListener(() => {
     autoSortSec: 0,
     autoSortMin: 0,
     autoSortHours: 0,
-    preserveGroupOrder: false,
+    preserveGroupOrder: true,
   });
 });

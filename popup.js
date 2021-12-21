@@ -47,6 +47,10 @@ async function start() {
     urlCopy();
   };
 
+  document.getElementById("selectAll").onclick = function () {
+    selectAll();
+  };
+
   // Calls function when button is pressed
   document.getElementById("btnGroup").onclick = function () {
     // Prevents selection to go back to default value
@@ -66,6 +70,9 @@ async function start() {
     } else if (document.getElementById("groupSelect").value == "addWindow") {
       addWindow();
     }
+
+    // Reloads script in order to show updated tabs in tabDiv
+    location.reload();
   };
 
   document.getElementById("btnSort").onclick = function () {
@@ -76,11 +83,13 @@ async function start() {
     } else if (document.getElementById("sortSelect").value == "urlSort") {
       urlSort();
     }
+
+    location.reload();
   };
 }
 
 // Displays titles of open tabs with checkboxes in a list
-function tabList() {
+async function tabList() {
   // Separates titles into a different array
   titles = [];
   for (let i = 0; i < tabs.length; i++) {
@@ -116,6 +125,7 @@ function tabList() {
     container.appendChild(newLabel);
     container.appendChild(br);
 
+    // Increases height of tabDiv for each tab
     if (height < 160) {
       height += 20;
     }
@@ -127,7 +137,29 @@ function tabList() {
   tabDiv.style.height = strTabDiv;
 
   // Increases height of body depending on the amount of open tabs
-  document.body.style.height = height + 260 + "px";
+  document.body.style.height = height + 285 + "px";
+}
+
+// Selects all checkboxes
+// If all checkboxes are selected then unselect all checkboxes
+function selectAll() {
+  let i = 0;
+
+  [].forEach.call(document.querySelectorAll('input[type="checkbox"]'), function (cb) {
+    if (cb.checked == true) {
+      i++;
+    }
+  });
+
+  if (i != tabs.length) {
+    [].forEach.call(document.querySelectorAll('input[type="checkbox"]'), function (cb) {
+      cb.checked = true;
+    });
+  } else {
+    [].forEach.call(document.querySelectorAll('input[type="checkbox"]'), function (cb) {
+      cb.checked = false;
+    });
+  }
 }
 
 // Copies urls of checked tabs to clipboard in form of a list
@@ -188,7 +220,9 @@ function title() {
 }
 
 // Returns the number of tabs in each group
-function tabsInGroups() {
+async function tabsInGroups() {
+  tabs = await chrome.tabs.query({ currentWindow: true });
+
   // Resets values to 0
   let tabsInGroup = [];
   for (let i = 0; i < groups.length; i++) {
@@ -205,11 +239,6 @@ function tabsInGroups() {
   }
 
   return tabsInGroup;
-}
-
-// Returns promise of tabs in current window
-async function reQueryTabs() {
-  return await chrome.tabs.query({ currentWindow: true });
 }
 
 async function addGroup() {
@@ -231,49 +260,60 @@ async function addGroup() {
   chrome.tabGroups.update(newGroupId, { title: title(), color: selectedColor });
 }
 
+// Adds selected tabs to existing group
 async function existingGroup() {
-  // Adds selected tabs to existing group
   let group = await chrome.tabGroups.query({ title: title() });
+
   for (let i = 0; i < cbChecked().length; i++) {
     chrome.tabs.group({ groupId: group[0].id, tabIds: cbChecked()[i] });
   }
 }
 
+// Removes selected tabs from a group
 function removeFromGroup() {
-  // Removes selected tabs from a group
   for (let i = 0; i < cbChecked().length; i++) {
     chrome.tabs.ungroup(cbChecked()[i]);
   }
 }
 
+// Checks if the tabs groupIds match the given group id and ungroups them accordingly
 async function ungroup() {
-  // Checks if the tabs groupIds match the given group id and ungroups them accordingly
+  tabs = await chrome.tabs.query({ currentWindow: true });
   let group = await chrome.tabGroups.query({ title: title() });
-  for (let i = 0; i < tabs.length; i++) {
-    if (tabs[i].groupId == group[0].id) {
-      chrome.tabs.ungroup(tabs[i].id);
+
+  for (let i = 0; i < group.length; i++) {
+    for (let j = 0; j < tabs.length; j++) {
+      if (tabs[j].groupId == group[i].id) {
+        chrome.tabs.ungroup(tabs[j].id);
+      }
     }
   }
 }
 
+// Checks if the tabs groupIds match the given group id and closes them accordingly
 async function closeGroup() {
-  // Checks if the tabs groupIds match the given group id and closes them accordingly
+  tabs = await chrome.tabs.query({ currentWindow: true });
   let group = await chrome.tabGroups.query({ title: title() });
-  for (let i = 0; i < tabs.length; i++) {
-    if (tabs[i].groupId == group[0].id) {
-      chrome.tabs.remove(tabs[i].id);
+
+  for (let i = 0; i < group.length; i++) {
+    for (let j = 0; j < tabs.length; j++) {
+      if (tabs[j].groupId == group[i].id) {
+        chrome.tabs.remove(tabs[j].id);
+      }
     }
   }
 }
 
+// Adds selected tabs to new window (Googles API:s doesn't have an option to rename windows)
 function addWindow() {
-  // Adds selected tabs to new window (Googles API:s doesn't have an option to rename windows)
   for (let i = 0; i < cbChecked().length; i++) {
     chrome.windows.create({ tabId: cbChecked()[i] });
   }
 }
 
 async function titleSort() {
+  tabs = await chrome.tabs.query({ currentWindow: true });
+
   chrome.storage.sync.get(["preserveGroupOrder"], (data) => {
     if (data.preserveGroupOrder == false) {
       // Separates titles into a different array
@@ -301,32 +341,32 @@ async function titleSort() {
         moveIndex += tabsInGroups()[i];
       }
 
-      reQueryTabs().then(function (newTabs) {
-        // Separates titles of ungrouped tabs into an array
-        let titles = [];
-        let tabsLength = newTabs.length - moveIndex;
-        for (let i = 0; i < tabsLength; i++) {
-          titles.push(newTabs[i + moveIndex].title);
-        }
+      // Separates titles of ungrouped tabs into an array
+      let titles = [];
+      let tabsLength = tabs.length - moveIndex;
+      for (let i = 0; i < tabsLength; i++) {
+        titles.push(tabs[i + moveIndex].title);
+      }
 
-        // Sorts the array alphabetically
-        titles.sort((a, b) => a.localeCompare(b));
-        console.log(titles);
+      // Sorts the array alphabetically
+      titles.sort((a, b) => a.localeCompare(b));
+      console.log(titles);
 
-        // Checks if the titles match and rearranges the tabs accordingly
-        for (let i = 0; i < titles.length; i++) {
-          for (let j = 0; j < titles.length; j++) {
-            if (newTabs[i + moveIndex].title == titles[j]) {
-              chrome.tabs.move(newTabs[i + moveIndex].id, { index: j + moveIndex });
-            }
+      // Checks if the titles match and rearranges the tabs accordingly
+      for (let i = 0; i < titles.length; i++) {
+        for (let j = 0; j < titles.length; j++) {
+          if (tabs[i + moveIndex].title == titles[j]) {
+            chrome.tabs.move(tabs[i + moveIndex].id, { index: j + moveIndex });
           }
         }
-      });
+      }
     }
   });
 }
 
-function urlSort() {
+async function urlSort() {
+  tabs = await chrome.tabs.query({ currentWindow: true });
+
   chrome.storage.sync.get(["preserveGroupOrder"], (data) => {
     if (data.preserveGroupOrder == false) {
       // Separates urls into a different array & only keeps the hostname
@@ -357,29 +397,27 @@ function urlSort() {
         moveIndex += tabsInGroups()[i];
       }
 
-      reQueryTabs().then(function (newTabs) {
-        // Separates urls into a different array & only keeps the hostname
-        let urls = [];
-        let tabHostnames = [];
-        let tabsLength = newTabs.length - moveIndex;
-        for (let i = 0; i < tabsLength; i++) {
-          urls.push(newTabs[i + moveIndex].url);
-          urls[i] = urls[i].replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
-          tabHostnames[i] = newTabs[i + moveIndex].url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
-        }
+      // Separates urls into a different array & only keeps the hostname
+      let urls = [];
+      let tabHostnames = [];
+      let tabsLength = tabs.length - moveIndex;
+      for (let i = 0; i < tabsLength; i++) {
+        urls.push(tabs[i + moveIndex].url);
+        urls[i] = urls[i].replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
+        tabHostnames[i] = tabs[i + moveIndex].url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
+      }
 
-        // Sorts the array alphabetically
-        urls.sort((a, b) => a.localeCompare(b));
+      // Sorts the array alphabetically
+      urls.sort((a, b) => a.localeCompare(b));
 
-        // Checks if the urls match and rearranges the tabs accordingly
-        for (let i = 0; i < urls.length; i++) {
-          for (let j = 0; j < urls.length; j++) {
-            if (tabHostnames[i] == urls[j]) {
-              chrome.tabs.move(newTabs[i + moveIndex].id, { index: j + moveIndex });
-            }
+      // Checks if the urls match and rearranges the tabs accordingly
+      for (let i = 0; i < urls.length; i++) {
+        for (let j = 0; j < urls.length; j++) {
+          if (tabHostnames[i] == urls[j]) {
+            chrome.tabs.move(tabs[i + moveIndex].id, { index: j + moveIndex });
           }
         }
-      });
+      }
     }
   });
 }

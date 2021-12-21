@@ -18,26 +18,26 @@ body {
   overflow: auto;
 }
 
-#flexbox {
+.flexbox {
   display: flex;
 }
 
 /* name input field */
 #inputName {
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 15px;
-  width: 50%;
+  width: 75%;
   height: 20px;
 }
 
 /* Custom radio buttons */
-/* Customize the label (the container) */
+/* Customizes the label (the container) */
 .container {
   position: relative;
   padding-left: 25px;
 }
 
-/* Hide the browser's default radio button */
+/* Hides the browser's default radio buttons */
 .container input {
   position: absolute;
   opacity: 0;
@@ -45,7 +45,7 @@ body {
   width: 0;
 }
 
-/* Create a custom radio button */
+/* Creates custom radio buttons */
 .checkmark {
   position: absolute;
   top: 0;
@@ -55,19 +55,19 @@ body {
   border-radius: 50%;
 }
 
-/* Create the indicator (the dot/circle - hidden when not checked) */
+/* Creates the indicator (the dot/circle - hidden when not checked) */
 .checkmark:after {
   content: "";
   position: absolute;
   display: none;
 }
 
-/* Show the indicator (dot/circle) when checked */
+/* Shows the indicator (dot/circle) when checked */
 .container input:checked ~ .checkmark:after {
   display: block;
 }
 
-/* Style the indicator (dot/circle) */
+/* Styles the indicator (dot/circle) */
 .container .checkmark:after {
   transform: translate(50%, 50%);
   width: 10px;
@@ -123,8 +123,23 @@ label[for="sortSelect"] {
   width: 75%;
 }
 
+/* button hover-effects (only works with id for some reason?) */
+#btnGroup:hover,
+#btnSort:hover,
+#urlCopy:hover,
+#selectAll:hover {
+  background-color: #174ea6;
+}
+
+/* more button-effects */
+.btn:active,
+.btn:active:after {
+  opacity: 0.5;
+}
+
 /* sorting buttons */
-.btn {
+#btnGroup,
+#btnSort {
   background-color: #1a73e8;
   color: white;
   border-style: none;
@@ -133,28 +148,18 @@ label[for="sortSelect"] {
   width: 75%;
 }
 
-/* urlCopy button */
-#urlCopy {
+.btnTop {
   height: 25px;
-  width: 50%;
+  width: 30%;
   background-color: #1a73e8;
   color: white;
   border-style: none;
   border-radius: 3px;
-  margin-top: 15px;
+  margin-top: 10px;
+  font-size: 12px;
+}
+
+/* urlCopy button */
+#urlCopy {
   margin-left: 5px;
-}
-
-/* button hover-effects */
-.btn:hover,
-#urlCopy:hover {
-  background-color: #174ea6;
-}
-
-/* more button-effects */
-.btn:active,
-.btn:active:after,
-#urlCopy:active,
-#urlCopy:active:after {
-  opacity: 0.5;
 }
