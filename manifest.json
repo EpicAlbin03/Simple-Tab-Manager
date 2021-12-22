@@ -30,5 +30,5 @@
     "open_in_tab": true
   },
 
-  "permissions": ["activeTab", "tabs", "storage", "tabGroups"]
+  "permissions": ["tabs", "storage", "tabGroups"]
 }
