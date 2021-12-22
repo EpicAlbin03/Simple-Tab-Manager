@@ -11,3 +11,6 @@ chrome.runtime.onInstalled.addListener(() => {
     preserveGroupOrder: true,
   });
 });
+
+// Opens a google form when extension is uninstalled
+chrome.runtime.setUninstallURL("https://forms.gle/wUM4AHrouDAHYe1D6");
