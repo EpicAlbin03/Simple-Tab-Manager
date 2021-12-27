@@ -1,5 +1,11 @@
 // Runs when chrome extension is installed
 chrome.runtime.onInstalled.addListener(() => {
+  // Opens website when extension is installed
+  chrome.tabs.create({
+    url: "https://epicalbin03.github.io/simpletabmanager/",
+    active: true
+  });
+
   // Save variables in storage (default values)
   chrome.storage.sync.set({
     groupOption: "addGroup",
@@ -13,4 +19,4 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Opens a google form when extension is uninstalled
-chrome.runtime.setUninstallURL("https://forms.gle/wUM4AHrouDAHYe1D6");
+chrome.runtime.setUninstallURL("https://docs.google.com/forms/d/e/1FAIpQLSeWrvbjLACyM89LGy-7VOdm_pN-O8yIA9FSotfwSq24uzF6KQ/viewform?usp=pp_url&entry.1558238205=Not+using+it+anymore");
