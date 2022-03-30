@@ -15,12 +15,16 @@ chrome.storage.sync.get(["autoSort", "autoSortSec", "autoSortMin", "autoSortHour
   elPreserveGroupOrder.checked = data.preserveGroupOrder;
 
   toggleInputTime();
-  callFunctions();
+  callSW();
 });
 
 // Enables save-button when any setting is changed
 document.body.addEventListener("change", function () {
-  document.getElementById("save").disabled = false;
+  if (elAutoSort.checked) {
+    if (elAutoSortSec.value > 0 || elAutoSortMin.value > 0 || elAutoSortHours.value > 0) {
+      document.getElementById("save").disabled = false;
+    } else document.getElementById("save").disabled = true;
+  } else document.getElementById("save").disabled = false;
 });
 
 // Save-button onclick
@@ -37,7 +41,7 @@ document.getElementById("save").onclick = function () {
   // Disables save-button
   document.getElementById("save").disabled = true;
 
-  callFunctions();
+  callSW();
 };
 
 document.getElementById("autoSort").onclick = function () {
@@ -57,37 +61,13 @@ function toggleInputTime() {
   }
 }
 
-// Calls the correct function depending on the settings
-async function callFunctions() {
-  if (elAutoSort.checked) {
-    autoSort();
+// Calls the service worker
+function callSW() {
+  if (navigator.serviceWorker && elAutoSort.checked) {
+    navigator.serviceWorker.register("./background.js");
+    
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.active.postMessage("autoSort");
+    });
   }
-}
-
-// Automatically sorts tabs by title or url after [x] amount of time (settings page needs to stay open)
-function autoSort() {
-  chrome.storage.sync.get(["autoSortSec", "autoSortMin", "autoSortHours"], (data) => {
-    // Converts sec, min and hours to milliseconds and adds them together
-    let sec = data.autoSortSec * 1000;
-    let min = data.autoSortMin * 60 * 1000;
-    let hours = data.autoSortHours * 60 * 60 * 1000;
-    let time = sec + min + hours;
-
-    // Resets timerRef
-    clearInterval(timerRef);
-
-    // Function that repeats itself after [x] amount of time
-    timerRef = setInterval(function () {
-      chrome.storage.sync.get(["autoSort", "sortOption"], (data) => {
-        if (data.autoSort == true && (sec > 0 || min > 0 || hours > 0)) {
-          // Checks if titleSort or urlSort is selected, then calls the function from popup.js
-          if (data.sortOption == "titleSort") {
-            titleSort();
-          } else if (data.sortOption == "urlSort") {
-            urlSort();
-          }
-        }
-      });
-    }, time);
-  });
 }
