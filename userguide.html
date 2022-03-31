@@ -79,13 +79,12 @@
             <h4 class="pt-2">Sorting options</h4>
             <h6>Sort by title</h6>
             <p>
-              Sorts all tabs in the current window alphabetically by their titles. Tabs within groups will be unaffected if "Preserve order within groups"
-              option is selected.
+              Sorts all tabs in alphabetical order by their titles. Tabs within groups will be unaffected if "Preserve order within groups" option is selected.
             </p>
             <h6>Sort by url</h6>
             <p>
-              Sorts all tabs in the current window alphabetically by their urls. The tabs will be sorted by their hostname excluding things like "www" (see
-              example below). Tabs within groups will be unaffected if "Preserve order within groups" option is selected.
+              Sorts all tabs in alphabetical order by their urls. The tabs will be sorted by their hostnames excluding things like "www" (see example below).
+              Tabs within groups will be unaffected if "Preserve order within groups" option is selected.
             </p>
             <div class="code mb-3">https://www.<mark>youtube.com</mark>/feed/subscriptions</div>
 
@@ -93,8 +92,9 @@
             <h4 class="pt-2">Settings</h4>
             <h6>Automatically sort tabs</h6>
             <p>
-              All tabs in the current window will be automatically sorted after the currently selected sorting option (title or url) after [x] amount of time.
-              For example if sec = 30, the tabs will be sorted every 30 seconds. Please note that at least one of "sec", "min" or "hours" has to be > 0.
+              All tabs will be automatically sorted by the currently selected sorting option (title or url) after [x] amount of time. For example if sec = 30,
+              the tabs will be sorted every 30 seconds. The timer starts when you hit "save" and will run until you either turn it off or change the interval.
+              Please note that the timer will reset when the first window is created.
             </p>
             <h6>Preserve order within groups</h6>
             <p>

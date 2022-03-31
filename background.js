@@ -39,14 +39,14 @@ async function start() {
   }
 
   // Pushes groups in current window into global array
-  let groupsQuery = await chrome.tabGroups.query({ windowId: -1 });
+  let groupsQuery = await chrome.tabGroups.query({ windowId: -2 });
   for (let i = 0; i < groupsQuery.length; i++) {
     groups.push(groupsQuery[i]);
   }
 }
 
 addEventListener("message", (e) => {
-  console.log(e.data);
+  // console.log(e.data);
   if (e.data == "autoSort") autoSort();
   else if (e.data == "titleSort") titleSort();
   else if (e.data == "urlSort") urlSort();
@@ -54,7 +54,7 @@ addEventListener("message", (e) => {
 
 // Returns the number of tabs in each group
 async function tabsInGroups() {
-  tabs = await chrome.tabs.query({ currentWindow: true });
+  tabs = await chrome.tabs.query({ currentWindow: true }); // empty after closing settings
 
   // Resets values to 0
   let tabsInGroup = [];
@@ -70,6 +70,7 @@ async function tabsInGroups() {
       }
     }
   }
+
   return tabsInGroup;
 }
 
@@ -91,8 +92,10 @@ function autoSort() {
         if (data.autoSort == true && (sec > 0 || min > 0 || hours > 0)) {
           // Checks if titleSort or urlSort is selected, then calls the function from popup.js
           if (data.sortOption == "titleSort") {
+            // console.log("titleSort");
             titleSort();
           } else if (data.sortOption == "urlSort") {
+            // console.log("urlSort");
             urlSort();
           }
         }
@@ -101,9 +104,28 @@ function autoSort() {
   });
 }
 
+async function reTab() {
+  tabs = await chrome.tabs.query({ currentWindow: true });
+}
+
+// Calls autoSort() when the first window is created, if the option is checked
+chrome.windows.onCreated.addListener(() => {
+  chrome.windows.getAll((allWindows) => {
+    chrome.storage.sync.get(["autoSort"], (data) => {
+      if (data.autoSort && allWindows.length == 1) {
+        // console.log("autoSort");
+        autoSort();
+      }
+    });
+  });
+});
+
 async function titleSort() {
   tabs = await chrome.tabs.query({ currentWindow: true });
-  groups = await chrome.tabGroups.query({ windowId: -1 });
+  groups = await chrome.tabGroups.query({ windowId: -2 });
+  groups.sort(function (a, b) {
+    return a.title.localeCompare(b.title);
+  });
 
   chrome.storage.sync.get(["preserveGroupOrder"], (data) => {
     if (data.preserveGroupOrder == false) {
@@ -125,40 +147,34 @@ async function titleSort() {
         }
       }
     } else if (data.preserveGroupOrder == true) {
-      tabsInGroups().then((p) => {
+      tabsInGroups().then((tabsInGroups) => {
         // Moves groups to the left most positions
         let moveIndex = 0;
         for (let i = 0; i < groups.length; i++) {
           chrome.tabGroups.move(groups[i].id, { index: moveIndex });
-          // moveIndex += tabsInGroups()[i];
-          console.log(p);
-          moveIndex += p[i];
-          console.log("hej");
-          console.log(moveIndex);
+          moveIndex += tabsInGroups[i];
         }
 
-        console.log("hej2");
-        console.log(moveIndex);
-        // Separates titles of ungrouped tabs into an array
-        let titles = [];
-        let tabsLength = tabs.length - moveIndex;
-        for (let i = 0; i < tabsLength; i++) {
-          titles.push(tabs[i + moveIndex].title);
-        }
-        console.log(titles);
+        reTab().then(() => {
+          // Separates titles of ungrouped tabs into an array
+          let titles = [];
+          let tabsLength = tabs.length - moveIndex;
+          for (let i = 0; i < tabsLength; i++) {
+            titles.push(tabs[i + moveIndex].title);
+          }
 
-        // Sorts the array alphabetically
-        titles.sort((a, b) => a.localeCompare(b));
-        console.log(titles);
+          // Sorts the array alphabetically
+          titles.sort((a, b) => a.localeCompare(b));
 
-        // Checks if the titles match and rearranges the tabs accordingly
-        // for (let i = 0; i < titles.length; i++) {
-        //   for (let j = 0; j < titles.length; j++) {
-        //     if (tabs[i + moveIndex].title == titles[j]) {
-        //       chrome.tabs.move(tabs[i + moveIndex].id, { index: j + moveIndex });
-        //     }
-        //   }
-        // }
+          // Checks if the titles match and rearranges the tabs accordingly
+          for (let i = 0; i < titles.length; i++) {
+            for (let j = 0; j < titles.length; j++) {
+              if (tabs[i + moveIndex].title == titles[j]) {
+                chrome.tabs.move(tabs[i + moveIndex].id, { index: j + moveIndex });
+              }
+            }
+          }
+        });
       });
     }
   });
@@ -166,6 +182,10 @@ async function titleSort() {
 
 async function urlSort() {
   tabs = await chrome.tabs.query({ currentWindow: true });
+  groups = await chrome.tabGroups.query({ windowId: -2 });
+  groups.sort(function (a, b) {
+    return a.title.localeCompare(b.title);
+  });
 
   chrome.storage.sync.get(["preserveGroupOrder"], (data) => {
     if (data.preserveGroupOrder == false) {
@@ -190,34 +210,38 @@ async function urlSort() {
         }
       }
     } else if (data.preserveGroupOrder == true) {
-      // Moves groups to the left most positions
-      let moveIndex = 0;
-      for (let i = 0; i < groups.length; i++) {
-        chrome.tabGroups.move(groups[i].id, { index: moveIndex });
-        moveIndex += tabsInGroups()[i];
-      }
-
-      // Separates urls into a different array & only keeps the hostname
-      let urls = [];
-      let tabHostnames = [];
-      let tabsLength = tabs.length - moveIndex;
-      for (let i = 0; i < tabsLength; i++) {
-        urls.push(tabs[i + moveIndex].url);
-        urls[i] = urls[i].replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
-        tabHostnames[i] = tabs[i + moveIndex].url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
-      }
-
-      // Sorts the array alphabetically
-      urls.sort((a, b) => a.localeCompare(b));
-
-      // Checks if the urls match and rearranges the tabs accordingly
-      for (let i = 0; i < urls.length; i++) {
-        for (let j = 0; j < urls.length; j++) {
-          if (tabHostnames[i] == urls[j]) {
-            chrome.tabs.move(tabs[i + moveIndex].id, { index: j + moveIndex });
-          }
+      tabsInGroups().then((tabsInGroups) => {
+        // Moves groups to the left most positions
+        let moveIndex = 0;
+        for (let i = 0; i < groups.length; i++) {
+          chrome.tabGroups.move(groups[i].id, { index: moveIndex });
+          moveIndex += tabsInGroups[i];
         }
-      }
+
+        reTab().then(() => {
+          // Separates urls into a different array & only keeps the hostname
+          let urls = [];
+          let tabHostnames = [];
+          let tabsLength = tabs.length - moveIndex;
+          for (let i = 0; i < tabsLength; i++) {
+            urls.push(tabs[i + moveIndex].url);
+            urls[i] = urls[i].replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
+            tabHostnames[i] = tabs[i + moveIndex].url.replace(/^(?:https?:\/\/)?(?:www\.)?/i, "").split("/")[0];
+          }
+
+          // Sorts the array alphabetically
+          urls.sort((a, b) => a.localeCompare(b));
+
+          // Checks if the urls match and rearranges the tabs accordingly
+          for (let i = 0; i < urls.length; i++) {
+            for (let j = 0; j < urls.length; j++) {
+              if (tabHostnames[i] == urls[j]) {
+                chrome.tabs.move(tabs[i + moveIndex].id, { index: j + moveIndex });
+              }
+            }
+          }
+        });
+      });
     }
   });
 }

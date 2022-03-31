@@ -1,7 +1,7 @@
 {
   "name": "Simple Tab Manager",
   "description": "Simple tab manager that allows you to easily group and sort tabs.",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "manifest_version": 3,
 
   "icons": {

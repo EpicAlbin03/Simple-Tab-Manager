@@ -5,6 +5,7 @@ let elAutoSortMin = document.getElementById("autoSortMin");
 let elAutoSortHours = document.getElementById("autoSortHours");
 let elPreserveGroupOrder = document.getElementById("preserveGroupOrder");
 var timerRef;
+let firstTime = true;
 
 // Loads values from storage and assigns it to settings
 chrome.storage.sync.get(["autoSort", "autoSortSec", "autoSortMin", "autoSortHours", "preserveGroupOrder"], (data) => {
@@ -15,7 +16,7 @@ chrome.storage.sync.get(["autoSort", "autoSortSec", "autoSortMin", "autoSortHour
   elPreserveGroupOrder.checked = data.preserveGroupOrder;
 
   toggleInputTime();
-  callSW();
+  // callSW();
 });
 
 // Enables save-button when any setting is changed
@@ -61,11 +62,11 @@ function toggleInputTime() {
   }
 }
 
-// Calls the service worker
+// Sends message to service worker, calls autoSort()
 function callSW() {
   if (navigator.serviceWorker && elAutoSort.checked) {
     navigator.serviceWorker.register("./background.js");
-    
+
     navigator.serviceWorker.ready.then((registration) => {
       registration.active.postMessage("autoSort");
     });

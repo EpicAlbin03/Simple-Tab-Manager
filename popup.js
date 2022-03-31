@@ -26,13 +26,12 @@ async function start() {
   }
 
   // Pushes groups in current window into global array
-  let groupsQuery = await chrome.tabGroups.query({ windowId: -1 });
+  let groupsQuery = await chrome.tabGroups.query({ windowId: -2 });
   for (let i = 0; i < groupsQuery.length; i++) {
     groups.push(groupsQuery[i]);
   }
 
   // Sorts groups-array in alphabetical order
-  // (for some reason it doesn't query groups from left to right like it does with tabs, seems to be bit random tbh)
   groups.sort(function (a, b) {
     return a.title.localeCompare(b.title);
   });
