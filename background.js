@@ -3,10 +3,10 @@ chrome.runtime.onInstalled.addListener((data) => {
   // Runs only when chrome extension is installed
   if (data.reason === "install") {
     // Opens website when extension is installed
-    chrome.tabs.create({
-      url: "https://epicalbin03.github.io/simpletabmanager/",
-      active: true,
-    });
+    // chrome.tabs.create({
+    //   url: "https://epicalbin03.github.io/simpletabmanager/",
+    //   active: true,
+    // });
 
     // Save variables in storage (default values)
     chrome.storage.sync.set({
