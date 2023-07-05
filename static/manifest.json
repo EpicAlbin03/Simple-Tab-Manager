@@ -1,0 +1,35 @@
+{
+	"name": "Simple Tab Manager",
+	"description": "Simple tab manager that allows you to easily manage and sort tabs.",
+	"version": "2.0.0",
+	"manifest_version": 3,
+
+	"icons": {
+		"16": "./images/icon-16x16.png",
+		"32": "./images/icon-32x32.png",
+		"48": "./images/icon-48x48.png",
+		"128": "./images/icon-128x128.png"
+	},
+
+	"action": {
+		"default_popup": "index.html",
+		"default_icons": {
+			"16": "./images/icon-16x16.png",
+			"32": "./images/icon-32x32.png",
+			"48": "./images/icon-48x48.png",
+			"128": "./images/icon-128x128.png"
+		}
+	},
+
+	"options_ui": {
+		"page": "options.html",
+		"open_in_tab": true
+	},
+
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+
+	"permissions": ["tabs", "storage"]
+}

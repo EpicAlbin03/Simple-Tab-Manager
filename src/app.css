@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+svg:focus {
+  outline: none;
+}
+
+.sortable-selected {
+  background-color: hsl(var(--a) / var(--tw-bg-opacity));
+  border-radius: 0.375rem;
+}
+
+[class^="tippy-"] {
+  @apply text-xs normal-case;
+}
