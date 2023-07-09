@@ -25,7 +25,8 @@ export async function getTab(tabId: number) {
 	return await chrome.tabs.get(tabId);
 }
 
-export async function openTab(tabId: number) {
+export async function openTab(tabId: number, windowId: number) {
+	await chrome.windows.update(windowId, { focused: true });
 	await chrome.tabs.update(tabId, { active: true });
 }
 
@@ -44,6 +45,15 @@ export async function pinSelectedTabs() {
 	await Promise.all(updatePromises);
 }
 
+export async function muteSelectedTabs() {
+	const selectedTabs = get(selectedTabsStore);
+	const updatePromises = selectedTabs.map(async (selectedTab) => {
+		const tab = await getTab(+selectedTab.id);
+		return await chrome.tabs.update(+selectedTab.id, { muted: !tab.mutedInfo?.muted });
+	});
+	await Promise.all(updatePromises);
+}
+
 export async function pinTab(tabId: number) {
 	return await chrome.tabs.update(tabId, { pinned: true });
 }
@@ -51,15 +61,13 @@ export async function pinTab(tabId: number) {
 export function selectTab(tab: HTMLElement) {
 	Sortable.utils.select(tab);
 	selectedTabsStore.update((tabs) => [...tabs, tab]);
+	windowsStore.reload?.();
 }
 
 export function deselectTab(tab: HTMLElement) {
 	Sortable.utils.deselect(tab);
-	selectedTabsStore.update((tabs) => {
-		const index = tabs.indexOf(tab);
-		tabs.splice(index, 1);
-		return tabs;
-	});
+	selectedTabsStore.update((tabs) => tabs.filter((t) => t.id !== tab.id));
+	windowsStore.reload?.();
 }
 
 export async function createTab(createProperties: chrome.tabs.CreateProperties = {}) {

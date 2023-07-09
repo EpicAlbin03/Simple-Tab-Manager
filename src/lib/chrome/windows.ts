@@ -37,6 +37,10 @@ export async function removeWindow(windowId: number) {
 	return await chrome.windows.remove(windowId);
 }
 
+export async function openWindow(windowId: number) {
+	return await chrome.windows.update(windowId, { focused: true });
+}
+
 export async function toggleMinimizedWindow(windowId: number) {
 	const window = await getWindow(windowId);
 	if (window.state === 'minimized') {
