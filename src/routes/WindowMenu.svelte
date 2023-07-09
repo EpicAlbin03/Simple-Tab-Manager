@@ -3,9 +3,13 @@
 	import Sortable from 'sortablejs';
 	import { deselectTab, getPinnedTabs, getTab, moveTab, openTab, pinTab } from '$lib/chrome/tabs';
 	import { handleRightClick } from '$lib/popup';
-	import { getWindow } from '$lib/chrome/windows';
-	import { selectedTabsStore } from '$lib/stores';
+	import { getWindow, openWindow } from '$lib/chrome/windows';
+	import { selectedTabsStore, windowsStore } from '$lib/stores';
 	import WindowMenuNav from './WindowMenuNav.svelte';
+	// @ts-ignore
+	import PinOutline from 'svelte-ionicons/PinOutline.svelte';
+	// @ts-ignore
+	import VolumeMuteOutline from 'svelte-ionicons/VolumeMuteOutline.svelte';
 
 	export let window: chrome.windows.Window;
 	export let i: number;
@@ -51,14 +55,15 @@
 				// Doesn't run on Sortable.utils.select()
 				if (!ctrlDown) {
 					deselectTab(e.item);
-					await openTab(+e.item.id);
 				} else {
 					selectedTabsStore.update((tabs) => [...tabs, e.item]);
+					windowsStore.reload?.();
 				}
 			},
 			onDeselect: function (e) {
 				// Doesn't run on Sortable.utils.deselect()
 				selectedTabsStore.update((tabs) => tabs.filter((tab) => tab.id !== e.item.id));
+				windowsStore.reload?.();
 			},
 			onEnd: async function (e) {
 				if (e.newIndex !== undefined && e.oldIndex !== undefined) {
@@ -116,15 +121,25 @@
 </script>
 
 <ul
-	class="menu menu-xs rounded-lg max-w-xs h-fit w-full bg-base-200"
+	class="menu menu-xs rounded-lg max-w-xs h-fit w-full bg-base-200 cursor-pointer"
 	style={`background-color: ${windowColor ? windowColor : ''}`}
+	on:click={async (e) => {
+		if (e.target === e.currentTarget) {
+			if (window.id) await openWindow(+window.id);
+		}
+	}}
+	on:keydown={async (e) => {
+		if (e.target === e.currentTarget) {
+			if (window.id) await openWindow(+window.id);
+		}
+	}}
 >
 	<WindowMenuNav {window} {i} {minimized} bind:windowColor />
 	{#if window.tabs && !minimized}
 		<ul
 			class="windowMenu {gridView ? 'flex flex-wrap gap-2' : ''}
 			{windowMenuMaxHeight <= 0 ? '' : 'overflow-y-auto'}"
-			style={windowMenuMaxHeight <= 0 ? "" : `max-height: ${windowMenuMaxHeight}px`}
+			style={windowMenuMaxHeight <= 0 ? '' : `max-height: ${windowMenuMaxHeight}px`}
 			id={window.id?.toString()}
 			bind:this={windowMenu}
 		>
@@ -134,11 +149,22 @@
 						<button
 							class="label cursor-pointer justify-normal w-full bottomEndTippy"
 							data-tippy-content={showUrl ? tab.url : tab.title}
+							on:click={async () => {
+								if (!ctrlDown && tab.id && window.id) await openTab(+tab.id, +window.id);
+							}}
 						>
 							<img src={tab.favIconUrl} alt="favicon" width="12" height="12" />
 							<span class="label-text text-xs {showEntireTitle ? '' : 'truncate'}">
 								{showUrl ? tab.url : tab.title}
 							</span>
+							{#if tab.pinned && tab.mutedInfo?.muted}
+								<VolumeMuteOutline size="16" />
+								<PinOutline size="16" />
+							{:else if tab.pinned}
+								<PinOutline size="16" />
+							{:else if tab.mutedInfo?.muted}
+								<VolumeMuteOutline size="16" />
+							{/if}
 						</button>
 					</li>
 				{:else}
@@ -146,6 +172,9 @@
 						<button
 							class="label cursor-pointer justify-normal btn-xs btn-square relative bottomEndTippy"
 							data-tippy-content={showUrl ? tab.url : tab.title}
+							on:click={async () => {
+								if (!ctrlDown && tab.id && window.id) await openTab(+tab.id, +window.id);
+							}}
 						>
 							<img
 								src={tab.favIconUrl}

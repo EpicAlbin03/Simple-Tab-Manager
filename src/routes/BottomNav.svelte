@@ -10,13 +10,15 @@
 	// @ts-ignore
 	import PinOutline from 'svelte-ionicons/PinOutline.svelte';
 	// @ts-ignore
+	import VolumeMuteOutline from 'svelte-ionicons/VolumeMuteOutline.svelte';
+	// @ts-ignore
 	import TrashOutline from 'svelte-ionicons/TrashOutline.svelte';
 	// @ts-ignore
 	import EyeOutline from 'svelte-ionicons/EyeOutline.svelte';
 	// @ts-ignore
 	import EyeOffOutline from 'svelte-ionicons/EyeOffOutline.svelte';
 	import SearchBar from './SearchBar.svelte';
-	import { createTab, pinSelectedTabs, removeSelectedTabs } from '$lib/chrome/tabs';
+	import { createTab, muteSelectedTabs, pinSelectedTabs, removeSelectedTabs } from '$lib/chrome/tabs';
 	import { selectedTabsStore, windowsStore } from '$lib/stores';
 	import { createEmptyWindow } from '$lib/chrome/windows';
 	import { beforeUpdate } from 'svelte';
@@ -75,6 +77,15 @@
 				on:click={async () => await pinSelectedTabs()}
 			>
 				<PinOutline size="16" />
+			</button>
+		</li>
+		<li>
+			<button
+				class="btn btn-square btn-warning btn-sm topTippy"
+				data-tippy-content="Mute ({$selectedTabsStore.length}) tabs"
+				on:click={async () => await muteSelectedTabs()}
+			>
+				<VolumeMuteOutline size="16" />
 			</button>
 		</li>
 		<li>
