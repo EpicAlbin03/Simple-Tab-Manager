@@ -24,7 +24,7 @@
 ### Windows
 
 - Open and close windows
-- Minmize and maximize windows
+- Minimize and maximize windows
 - Add new tab to window
 - Customize the title and color of the window (UI only)
 
@@ -32,6 +32,7 @@
 
 - Open and close tabs
 - Pin and unpin tabs
+- Mute and unmute tabs
 - Move tabs within and between windows
 - Select multiple tabs at once with Right-Click or Ctrl+Click
 - Sort tabs by title or url
