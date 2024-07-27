@@ -1,44 +1,38 @@
-<p align="center">
-  <img alt="Simple Tab Manager logo" src="./static/images/icon-128x128.png">
-</p>
-<br/>
-<p align="center">
-  <a rel="noreferrer noopener" href="https://chrome.google.com/webstore/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc/">
-    <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white">
-  </a>
-  <a rel="noreferrer noopener" href="https://ko-fi.com/albincarlsson">
-    <img alt="Support me on Ko-Fi" src="https://storage.ko-fi.com/cdn/brandasset/kofi_button_red.png" height="28">
-  </a>
-<h1 align="center">Simple Tab Manager</h1>
-<br/>
-<p align="center">
-  Simple Tab Manager is an
-  <strong>open-source</strong> MIT-licensed
-  <strong>browser extension</strong> that allows you to easily manage and sort tabs.
-</p>
-<br/>
-<br/>
+# create-svelte
 
-## Functionality
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
-### Windows
+## Creating a project
 
-- Open and close windows
-- Minimize and maximize windows
-- Add new tab to window
-- Customize the title and color of the window (UI only)
+If you're seeing this, you've probably already done this step. Congrats!
 
-### Tabs
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-- Open and close tabs
-- Pin and unpin tabs
-- Mute and unmute tabs
-- Move tabs within and between windows
-- Select multiple tabs at once with Right-Click or Ctrl+Click
-- Sort tabs by title or url
-- Filter tabs by search
+# create a new project in my-app
+npm create svelte@latest my-app
+```
 
-### Other
+## Developing
 
-- Supports dark mode
-- Supports a more compact view (grid view)
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+
+```bash
+npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
+
+## Building
+
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
