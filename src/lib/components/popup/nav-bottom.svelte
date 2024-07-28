@@ -20,7 +20,7 @@
   let isGridView = $state(gridView)
 </script>
 
-<div class="bg-background flex justify-between items-center p-1">
+<div class="bg-background flex justify-between items-center p-1 border-t">
   <Search {hideOnSearch} />
 
   <div class="flex gap-1">

@@ -19,7 +19,6 @@ export const load: LayoutLoad = async (event) => {
   }
 
   return {
-    gridView: options.gridView,
-    hideOnSearch: options.hideOnSearch,
+    options,
   }
 }
