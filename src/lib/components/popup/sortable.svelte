@@ -1,18 +1,25 @@
 <script lang="ts">
   import Sortable from "sortablejs"
   import { Toggle } from "$lib/components/ui"
-  import { onMount } from "svelte"
+  import { getContext } from "svelte"
+  import { type TabViewStore } from "$lib/stores.svelte"
 
   type Props = {
     tabs: chrome.tabs.Tab[]
-    gridView: boolean
   }
 
-  let { tabs, gridView }: Props = $props()
+  let { tabs }: Props = $props()
+  let _tabs = $state(tabs)
 
-  let sortableList: HTMLUListElement
+  const tabViewStore: TabViewStore = getContext("tabViewStore")
 
-  onMount(async () => {
+  $effect(() => {
+    initSortable()
+  })
+
+  let sortableList: HTMLElement
+
+  async function initSortable() {
     const { MultiDrag } = await import("sortablejs")
     try {
       Sortable.mount(new MultiDrag())
@@ -32,22 +39,24 @@
       scrollSpeed: 10,
       bubbleScroll: true,
     })
-  })
+  }
 </script>
 
-<ul bind:this={sortableList}>
-  {#each tabs as tab}
-    {#if gridView}
-      <li>
-        {tab.title}
-      </li>
-    {:else}
-      <li>
+<ul bind:this={sortableList} class={`${tabViewStore.tabView === "grid" ? "flex gap-1" : ""}`}>
+  {#each _tabs as tab}
+    {#if tabViewStore.tabView === "list"}
+      <li class="tab">
         <Toggle size="sm" aria-label={tab.title} class="gap-2 w-full justify-start relative">
           <img src={tab.favIconUrl} alt={tab.title} width="12" height="12" class="absolute" />
           <span class="truncate pl-5">
             {tab.title}
           </span>
+        </Toggle>
+      </li>
+    {:else}
+      <li class="tab">
+        <Toggle size="sm" aria-label={tab.title}>
+          <img src={tab.favIconUrl} alt={tab.title} width="12" height="12" />
         </Toggle>
       </li>
     {/if}

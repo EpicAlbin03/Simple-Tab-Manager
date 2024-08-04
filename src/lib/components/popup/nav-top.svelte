@@ -3,19 +3,29 @@
   import Moon from "svelte-radix/Moon.svelte"
   import Gear from "svelte-radix/Gear.svelte"
   import { Button } from "$lib/components/ui"
-  import { toggleMode, mode } from "mode-watcher"
-  import { Store } from "runed"
+  import { setStorage, type Options } from "$lib/chrome/options"
+  import { setTheme } from "$lib/theme"
+  import { getContext } from "svelte"
 
-  const modeRune = new Store(mode)
-  const theme = modeRune.current
+  const options: Options = getContext("options")
+  let theme = $state(options.theme)
 </script>
 
 <div class="bg-background flex justify-between items-center p-1 border-b">
   <div class="flex gap-1 ml-auto">
-    <Button size="icon">
+    <Button variant="ghost" size="icon">
       <Gear class="h-4 w-4" />
     </Button>
-    <Button variant="outline" size="icon" onclick={toggleMode}>
+
+    <Button
+      variant="ghost"
+      size="icon"
+      onclick={async () => {
+        theme = theme === "light" ? "dark" : "light"
+        setTheme(theme)
+        await setStorage("theme", theme)
+      }}
+    >
       {#if theme === "light"}
         <Sun class="h-4 w-4" />
       {:else}

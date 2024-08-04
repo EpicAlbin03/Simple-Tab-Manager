@@ -1,3 +1,42 @@
+export const emptyDummyWindow: chrome.windows.Window = {
+  alwaysOnTop: false,
+  focused: true,
+  height: 1392,
+  id: 873776134,
+  incognito: false,
+  left: 1268,
+  state: "normal",
+  tabs: [
+    {
+      active: true,
+      audible: false,
+      autoDiscardable: true,
+      discarded: false,
+      groupId: -1,
+      height: 1264,
+      highlighted: true,
+      id: 873776135,
+      incognito: false,
+      index: 0,
+      lastAccessed: 1722680833391.358,
+      mutedInfo: {
+        muted: false,
+      },
+      pendingUrl: "chrome://newtab/",
+      pinned: false,
+      selected: true,
+      status: "loading",
+      title: "New Tab",
+      url: "",
+      width: 1278,
+      windowId: 873776134,
+    },
+  ],
+  top: 0,
+  type: "normal",
+  width: 1292,
+}
+
 export const dummyWindows: chrome.windows.Window[] = [
   {
     alwaysOnTop: false,
@@ -6,7 +45,7 @@ export const dummyWindows: chrome.windows.Window[] = [
     id: 873773028,
     incognito: false,
     left: 3316,
-    state: "minimized",
+    state: "normal",
     tabs: [
       {
         active: true,
@@ -182,7 +221,7 @@ export const dummyWindows: chrome.windows.Window[] = [
     id: 873773030,
     incognito: false,
     left: 3316,
-    state: "minimized",
+    state: "normal",
     tabs: [
       {
         active: false,
@@ -290,7 +329,7 @@ export const dummyWindows: chrome.windows.Window[] = [
     id: 873773032,
     incognito: false,
     left: 3316,
-    state: "minimized",
+    state: "normal",
     tabs: [
       {
         active: true,
@@ -492,7 +531,7 @@ export const dummyWindows: chrome.windows.Window[] = [
     id: 873773034,
     incognito: false,
     left: 3316,
-    state: "minimized",
+    state: "normal",
     tabs: [
       {
         active: true,
@@ -825,7 +864,7 @@ export const dummyWindows: chrome.windows.Window[] = [
     id: 873773038,
     incognito: false,
     left: 3316,
-    state: "minimized",
+    state: "normal",
     tabs: [
       {
         active: true,
