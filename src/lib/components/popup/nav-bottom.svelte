@@ -20,7 +20,7 @@
   <Search />
 
   <div class="flex gap-1">
-    <Button variant="ghost" size="icon" onclick={() => createEmptyWindow()}>
+    <Button variant="ghost" size="icon" onclick={async () => await createEmptyWindow()}>
       <Plus class="h-4 w-4" />
     </Button>
 

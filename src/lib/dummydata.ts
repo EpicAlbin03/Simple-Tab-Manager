@@ -40,7 +40,7 @@ export const emptyDummyWindow: chrome.windows.Window = {
 export const dummyWindows: chrome.windows.Window[] = [
   {
     alwaysOnTop: false,
-    focused: false,
+    focused: true,
     height: 1104,
     id: 873773028,
     incognito: false,

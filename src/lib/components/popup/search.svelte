@@ -11,6 +11,35 @@
   let searchView = $state(options.searchView)
 
   let searchValue = $state("")
+  let searchInput: HTMLInputElement
+  let kbd: HTMLElement
+
+  $effect(() => {
+    function onKeydown(event: KeyboardEvent) {
+      if (event.key === "k" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault()
+        searchInput.focus()
+      }
+    }
+
+    function onFocus(event: FocusEvent) {
+      kbd.classList.add("hidden")
+    }
+
+    function onFocusout(event: FocusEvent) {
+      kbd.classList.remove("hidden")
+    }
+
+    document.addEventListener("keydown", onKeydown)
+    searchInput.addEventListener("focus", onFocus)
+    searchInput.addEventListener("focusout", onFocusout)
+
+    return () => {
+      document.removeEventListener("keydown", onKeydown)
+      searchInput.removeEventListener("focus", onFocus)
+      searchInput.removeEventListener("focusout", onFocusout)
+    }
+  })
 
   function search() {
     const tabs = Array.from(document.querySelectorAll(".tab")) as HTMLElement[]
@@ -37,15 +66,22 @@
 </script>
 
 <div class="flex gap-1 w-full">
-  <div class="relative max-w-60 w-full">
-    <MagnifyingGlass class="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
+  <div class="relative max-w-60 w-full flex items-center">
+    <MagnifyingGlass class="text-muted-foreground absolute left-2.5 h-4 w-4" />
     <Input
       type="search"
       placeholder="Search..."
       class="bg-background w-full pl-8"
       bind:value={searchValue}
+      bind:inputRef={searchInput}
       oninput={search}
     />
+    <kbd
+      bind:this={kbd}
+      class="absolute right-2.5 bg-muted text-muted-foreground pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100"
+    >
+      <span class="text-xs">⌘</span>K
+    </kbd>
   </div>
 
   <Button

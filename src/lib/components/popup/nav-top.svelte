@@ -9,6 +9,10 @@
 
   const options: Options = getContext("options")
   let theme = $state(options.theme)
+
+  $effect(() => {
+    setTheme(theme)
+  })
 </script>
 
 <div class="bg-background flex justify-between items-center p-1 border-b">

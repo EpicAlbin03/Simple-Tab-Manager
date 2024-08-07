@@ -45,7 +45,7 @@
 <ul bind:this={sortableList} class={`${tabViewStore.tabView === "grid" ? "flex gap-1" : ""}`}>
   {#each _tabs as tab}
     {#if tabViewStore.tabView === "list"}
-      <li class="tab">
+      <li class={`tab `}>
         <Toggle size="sm" aria-label={tab.title} class="gap-2 w-full justify-start relative">
           <img src={tab.favIconUrl} alt={tab.title} width="12" height="12" class="absolute" />
           <span class="truncate pl-5">

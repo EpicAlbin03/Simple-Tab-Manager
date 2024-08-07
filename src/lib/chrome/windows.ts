@@ -1,19 +1,20 @@
 import { dummyWindows } from "$lib/dummydata"
 import { isChromeExtension } from "$lib/chrome"
 
-export function addWindowEventListeners(updateWindows: (windows: chrome.windows.Window[]) => void) {
-  async function refreshWindows() {
-    const windows = await getAllWindows()
-    updateWindows(windows)
-  }
-
+export function addWindowEventListeners(refreshWindows: (...args: any[]) => void) {
   if (isChromeExtension()) {
     chrome.windows.onCreated.addListener(refreshWindows)
     chrome.windows.onRemoved.addListener(refreshWindows)
     chrome.windows.onFocusChanged.addListener(refreshWindows)
   }
+}
 
-  refreshWindows()
+export function removeWindowEventListeners(refreshWindows: (...args: any[]) => void) {
+  if (isChromeExtension()) {
+    chrome.windows.onCreated.removeListener(refreshWindows)
+    chrome.windows.onRemoved.removeListener(refreshWindows)
+    chrome.windows.onFocusChanged.removeListener(refreshWindows)
+  }
 }
 
 export async function getAllWindows() {
@@ -24,8 +25,19 @@ export async function getAllWindows() {
   }
 }
 
-export async function getWindow(windowId: number) {
-  return await chrome.windows.get(windowId, { populate: true })
+export async function getWindow(
+  windowId: number,
+  populate: { populate: boolean } = { populate: true }
+) {
+  return await chrome.windows.get(windowId, populate)
+}
+
+export async function getLastFocusedWindow() {
+  if (isChromeExtension()) {
+    return await chrome.windows.getLastFocused()
+  } else {
+    return dummyWindows[0]
+  }
 }
 
 export async function createEmptyWindow() {
@@ -40,9 +52,10 @@ export async function openWindow(windowId: number) {
   return await chrome.windows.update(windowId, { focused: true })
 }
 
+// ! Popup loses focus and closes when minimizing window, don't think this fixable
 export async function toggleMinimizedWindow(windowId: number) {
-  const window = await getWindow(windowId)
-  if (window?.state === "minimized") {
+  const window = await getWindow(windowId, { populate: false })
+  if (window.state === "minimized") {
     return await chrome.windows.update(windowId, { state: "normal", focused: true })
   } else {
     return await chrome.windows.update(windowId, { state: "minimized" })
