@@ -1,4 +1,6 @@
 <script lang="ts">
 </script>
 
-<p>options</p>
+<div>
+	<h1>options</h1>
+</div>

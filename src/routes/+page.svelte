@@ -1,42 +1,38 @@
 <script lang="ts">
-  import { NavBottom, NavTop, Window } from "$lib/components/popup"
-  import { addWindowEventListeners, removeWindowEventListeners } from "$lib/chrome/windows"
-  import { createTabViewStore, createWindowStore } from "$lib/stores.svelte"
-  import { getContext, setContext } from "svelte"
-  import type { Options } from "$lib/chrome/options"
-  import { addTabEventListeners, removeTabEventListeners } from "$lib/chrome/tabs"
+	import { addTabEventListeners, removeTabEventListeners } from '$lib/chrome/tabs';
+	import { addWindowEventListeners, removeWindowEventListeners } from '$lib/chrome/windows';
+	import BottomNav from '$lib/components/popup/BottomNav.svelte';
+	import TopNav from '$lib/components/popup/TopNav.svelte';
+	import Window from '$lib/components/popup/Window.svelte';
+	import { windowsStore } from '$lib/stores.svelte';
 
-  const windowStore = createWindowStore()
+	$effect(() => {
+		addWindowEventListeners();
+		addTabEventListeners();
 
-  $effect(() => {
-    addWindowEventListeners(windowStore.refreshWindows)
-    addTabEventListeners(windowStore.refreshWindows)
-
-    return () => {
-      removeWindowEventListeners(windowStore.refreshWindows)
-      removeTabEventListeners(windowStore.refreshWindows)
-    }
-  })
-
-  const options: Options = getContext("options")
-  const tabViewStore = createTabViewStore(options.tabView)
-  setContext("tabViewStore", tabViewStore)
+		return () => {
+			removeWindowEventListeners();
+			removeTabEventListeners();
+		};
+	});
 </script>
 
-<div class="border h-full w-full bg-muted/40 flex flex-col justify-between">
-  <NavTop />
+{#await windowsStore.refreshWindows()}
+	<p>loading...</p>
+{:then windows}
+	<div class="flex h-full w-full flex-col justify-between border bg-muted/40">
+		<TopNav />
 
-  <div class="overflow-auto h-full p-2">
-    <div class="flex flex-wrap gap-2">
-      {#key windowStore.windows}
-        {#if windowStore.windows}
-          {#each windowStore.windows as window, i}
-            <Window {window} {i} />
-          {/each}
-        {/if}
-      {/key}
-    </div>
-  </div>
+		<div class="h-full overflow-auto p-2">
+			<div class="flex flex-wrap gap-2">
+				{#each windowsStore.windows as window, i}
+					<Window {window} {i} />
+				{/each}
+			</div>
+		</div>
 
-  <NavBottom />
-</div>
+		<BottomNav />
+	</div>
+{:catch error}
+	<p>error</p>
+{/await}
