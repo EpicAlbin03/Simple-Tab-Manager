@@ -4,44 +4,37 @@
 	import EyeNone from 'svelte-radix/EyeNone.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { setOptions, type Options } from '$lib/chrome/storage';
 	import { getContext } from 'svelte';
+	import type { OptionsStore } from '$lib/stores.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { onFocusoutSearch, onFocusSearch, onSearch } from '$lib/shortcuts';
+	import { getTab } from '$lib/chrome/tabs';
 
-	const options: Options = getContext('options');
-	let searchView = $state(options.searchView);
+	const optionsStore: OptionsStore = getContext('optionsStore');
+	let searchView = $state(optionsStore.options.searchView);
+	let listView = $derived(optionsStore.options.tabView === 'list');
 
 	let searchValue = $state('');
 	let searchInput = $state() as HTMLInputElement;
 	let kbd: HTMLElement;
 
 	$effect(() => {
-		function onKeydown(event: KeyboardEvent) {
-			if (event.key === 'k' && (event.metaKey || event.ctrlKey)) {
-				event.preventDefault();
-				searchInput.focus();
-			}
-		}
-
-		function onFocus(event: FocusEvent) {
-			kbd.classList.add('hidden');
-		}
-
-		function onFocusout(event: FocusEvent) {
-			kbd.classList.remove('hidden');
-		}
-
-		document.addEventListener('keydown', onKeydown);
-		searchInput.addEventListener('focus', onFocus);
-		searchInput.addEventListener('focusout', onFocusout);
+		document.addEventListener('keydown', (event: KeyboardEvent) => onSearch(event, searchInput));
+		searchInput.addEventListener('focus', (event: FocusEvent) => onFocusSearch(event, kbd));
+		searchInput.addEventListener('focusout', (event: FocusEvent) => onFocusoutSearch(event, kbd));
 
 		return () => {
-			document.removeEventListener('keydown', onKeydown);
-			searchInput.removeEventListener('focus', onFocus);
-			searchInput.removeEventListener('focusout', onFocusout);
+			document.removeEventListener('keydown', (event: KeyboardEvent) =>
+				onSearch(event, searchInput)
+			);
+			searchInput.removeEventListener('focus', (event: FocusEvent) => onFocusSearch(event, kbd));
+			searchInput.removeEventListener('focusout', (event: FocusEvent) =>
+				onFocusoutSearch(event, kbd)
+			);
 		};
 	});
 
-	function search() {
+	async function search() {
 		const tabs = Array.from(document.querySelectorAll('.tab')) as HTMLElement[];
 		for (const tab of tabs) {
 			if (searchValue === '') {
@@ -49,7 +42,15 @@
 				tab.classList.remove('hidden');
 			}
 
-			if (tab.textContent?.toLowerCase().includes(searchValue.toLowerCase())) {
+			let b: boolean | undefined;
+			if (listView) {
+				b = tab.textContent?.toLowerCase().includes(searchValue.toLowerCase());
+			} else {
+				const chromeTab = await getTab(parseInt(tab.id));
+				b = chromeTab.title?.toLowerCase().includes(searchValue.toLowerCase());
+			}
+
+			if (b) {
 				if (searchView === 'hide') tab.classList.remove('opacity-30');
 				else tab.classList.remove('hidden');
 			} else {
@@ -70,11 +71,11 @@
 		<MagnifyingGlass class="absolute left-2.5 h-4 w-4 text-muted-foreground" />
 		<Input
 			type="search"
-			placeholder="Search..."
+			placeholder="Search tabs..."
 			class="w-full bg-background pl-8"
 			bind:value={searchValue}
-			bind:inputRef={searchInput}
-			oninput={search}
+			bind:ref={searchInput}
+			oninput={async () => await search()}
 		/>
 		<kbd
 			bind:this={kbd}
@@ -84,19 +85,31 @@
 		</kbd>
 	</div>
 
-	<Button
-		variant="ghost"
-		size="icon"
-		onclick={async () => {
-			searchView = searchView === 'show' ? 'hide' : 'show';
-			search();
-			await setOptions({ searchView });
-		}}
-	>
-		{#if searchView === 'show'}
-			<EyeOpen size="16" />
-		{:else}
-			<EyeNone size="16" />
-		{/if}
-	</Button>
+	<Tooltip.Root group>
+		<Tooltip.Trigger asChild let:builder>
+			<Button
+				builders={[builder]}
+				variant="ghost"
+				size="icon"
+				onclick={async () => {
+					searchView = searchView === 'show' ? 'hide' : 'show';
+					await search();
+					optionsStore.updateOptions({ searchView });
+				}}
+			>
+				{#if searchView === 'show'}
+					<EyeOpen size="16" />
+				{:else}
+					<EyeNone size="16" />
+				{/if}
+			</Button>
+		</Tooltip.Trigger>
+		<Tooltip.Content>
+			{#if searchView === 'show'}
+				<p>Hide tabs</p>
+			{:else}
+				<p>Show tabs</p>
+			{/if}
+		</Tooltip.Content>
+	</Tooltip.Root>
 </div>

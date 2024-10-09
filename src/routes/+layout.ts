@@ -1,12 +1,11 @@
 import { getOptions } from '$lib/chrome/storage';
-import { getSystemTheme, setTheme } from '$lib/theme';
+import { getSystemTheme } from '$lib/theme';
 import type { LayoutLoad } from './$types';
 
 export const prerender = true;
 
 export const load: LayoutLoad = async () => {
 	const systemTheme = getSystemTheme();
-	setTheme(systemTheme);
 
 	const options = await getOptions(systemTheme);
 

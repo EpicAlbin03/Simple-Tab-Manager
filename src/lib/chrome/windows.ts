@@ -1,5 +1,6 @@
-import { dummyWindows, emptyDummyWindow } from '$lib/dummydata';
+import { dummyWindows } from '$lib/dummydata';
 import { windowsStore } from '$lib/stores.svelte';
+import { clearSelectedTabs } from './tabs';
 import { isChromeExtension } from './utils';
 
 //*-----------------------------------------------------------------------*//
@@ -58,15 +59,19 @@ export function removeWindowEventListeners() {
 async function createWindowCallback(windowId: number) {
 	const populatedWindow = await getWindow(windowId, { populate: true });
 	windowsStore.addWindow(populatedWindow);
+	clearSelectedTabs();
 }
 
 async function removeWindowCallback(windowId: number) {
 	windowsStore.removeWindow(windowId);
+	clearSelectedTabs();
 }
 
+// ? Possibly keep selection after focused changed
 async function updateWindowCallback(windowId: number) {
 	const window = await getWindow(windowId, { populate: true });
 	windowsStore.updateWindow(window);
+	clearSelectedTabs();
 }
 
 //*-----------------------------------------------------------------------*//
@@ -89,26 +94,21 @@ export async function getWindow(windowId: number, queryOptions: chrome.windows.Q
 }
 
 export async function getLastFocusedWindow() {
-	if (isChromeExtension()) {
-		return await chrome.windows.getLastFocused();
-	}
+	return await chrome.windows.getLastFocused();
 }
 
 export async function createEmptyWindow() {
-	if (isChromeExtension()) {
-		await chrome.windows.create({ focused: true });
-	} else {
-		const randomId = crypto.getRandomValues(new Uint32Array(1))[0];
-		emptyDummyWindow.id = randomId;
-		emptyDummyWindow.tabs![0].windowId = randomId;
-		windowsStore.addWindow(emptyDummyWindow);
-	}
+	return await chrome.windows.create({ focused: true });
 }
 
 export async function removeWindow(windowId: number) {
-	if (isChromeExtension()) {
-		await chrome.windows.remove(windowId);
+	return await chrome.windows.remove(windowId);
+}
+
+export async function minimizeWindow(windowId: number, minimized: boolean) {
+	if (minimized) {
+		return await chrome.windows.update(windowId, { state: 'minimized' });
 	} else {
-		windowsStore.removeWindow(windowId);
+		return await chrome.windows.update(windowId, { state: 'normal' });
 	}
 }

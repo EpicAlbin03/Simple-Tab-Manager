@@ -39,6 +39,8 @@ export const emptyDummyWindow: ChromeWindow = {
 
 export const dummyWindows: ChromeWindow[] = [
 	{
+		name: 'test',
+		color: '0 84% 60%',
 		alwaysOnTop: false,
 		focused: true,
 		height: 1104,
@@ -215,6 +217,8 @@ export const dummyWindows: ChromeWindow[] = [
 		width: 1292
 	},
 	{
+		name: 'test 2',
+		color: '217 91% 60%',
 		alwaysOnTop: false,
 		focused: false,
 		height: 1104,

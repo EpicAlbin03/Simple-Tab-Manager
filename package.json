@@ -1,6 +1,6 @@
 {
 	"name": "stm-v3",
-	"version": "0.0.1",
+	"version": "3.0.0",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -27,11 +27,11 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.43.0",
 		"globals": "^15.9.0",
-		"nodemon": "^3.1.4",
+		"nodemon": "^3.1.7",
 		"prettier": "^3.3.3",
 		"prettier-plugin-svelte": "^3.2.6",
 		"prettier-plugin-tailwindcss": "^0.6.6",
-		"svelte": "5.0.0-next.244",
+		"svelte": "5.0.0-next.260",
 		"svelte-check": "^3.8.6",
 		"svelte-radix": "^1.1.1",
 		"sveltekit-adapter-chrome-extension": "^2.0.1",
@@ -42,12 +42,16 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"bits-ui": "^0.21.13",
+		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
+		"formsnap": "^1.0.1",
+		"mode-watcher": "^0.4.1",
 		"runed": "^0.15.1",
 		"sortablejs": "^1.15.2",
+		"svelte-sonner": "^0.3.28",
 		"tailwind-merge": "^2.5.2",
-		"tailwind-variants": "^0.2.1"
+		"tailwind-variants": "^0.2.1",
+		"zod": "^3.23.8"
 	},
 	"pnpm": {
 		"peerDependencyRules": {

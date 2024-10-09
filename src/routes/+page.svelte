@@ -17,22 +17,24 @@
 	});
 </script>
 
-{#await windowsStore.refreshWindows()}
-	<p>loading...</p>
-{:then windows}
-	<div class="flex h-full w-full flex-col justify-between border bg-muted/40">
-		<TopNav />
+{#if typeof window !== 'undefined'}
+	{#await windowsStore.refreshWindows()}
+		<p>loading...</p>
+	{:then windows}
+		<div class="flex h-full w-full flex-col justify-between bg-muted/40">
+			<TopNav />
 
-		<div class="h-full overflow-auto p-2">
-			<div class="flex flex-wrap gap-2">
-				{#each windowsStore.windows as window, i}
-					<Window {window} {i} />
-				{/each}
+			<div class="scrollable h-full overflow-auto p-2">
+				<div class="flex flex-wrap gap-2">
+					{#each windowsStore.windows as window, i}
+						<Window {window} {i} />
+					{/each}
+				</div>
 			</div>
-		</div>
 
-		<BottomNav />
-	</div>
-{:catch error}
-	<p>error</p>
-{/await}
+			<BottomNav />
+		</div>
+	{:catch error}
+		<p>error</p>
+	{/await}
+{/if}
