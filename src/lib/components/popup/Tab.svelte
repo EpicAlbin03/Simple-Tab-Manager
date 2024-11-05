@@ -25,13 +25,12 @@
 	};
 
 	let { tab, i, sortableWindow, listView, lastClickedTabIndexStore }: Props = $props();
+	let pressed = $state(tab.pressed ?? false);
 
 	const optionsStore: OptionsStore = getContext('optionsStore');
 	const { showTabUrl, truncateTabTitle, tabView } = $derived(optionsStore.options);
 
 	async function onTabClick(event: MouseEvent, clickedTab: ChromeTab, clickedTabIndex: number) {
-		event.preventDefault();
-
 		if (event.metaKey || event.ctrlKey) {
 			await openTab(clickedTab.id!, clickedTab.windowId);
 			clearSelectedTabs();
@@ -51,38 +50,40 @@
 	}
 </script>
 
-<Tooltip.Root group>
-	<Tooltip.Trigger asChild let:builder>
-		<div use:builder.action {...builder} class={listView ? '' : 'h-8 w-8'}>
-			<Toggle
-				size="sm"
-				aria-label={tab.title}
-				class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-full'}`}
-				bind:pressed={tab.pressed}
-				onclick={(event) => onTabClick(event, tab, i)}
-			>
-				<img
-					src={tab.favIconUrl}
-					alt={tab.title}
-					height="12"
-					width="12"
-					class={`h-3 w-3 ${listView ? 'absolute' : ''}`}
-				/>
-				{#if listView}
-					<span class={`pl-5 text-start ${truncateTabTitle ? 'truncate' : ''}`}>
-						{showTabUrl ? extractURL(tab.url!) : tab.title}
-					</span>
-					<span class="ml-auto flex gap-2 pl-1">
-						{#if tab.mutedInfo?.muted}
-							<SpeakerOff size="16" />
-						{/if}
-						{#if tab.pinned}
-							<DrawingPin size="16" />
-						{/if}
-					</span>
-				{/if}
-			</Toggle>
-		</div>
+<Tooltip.Root>
+	<Tooltip.Trigger>
+		{#snippet child({ props })}
+			<div {...props} class={listView ? '' : 'h-8 w-8'}>
+				<Toggle
+					size="sm"
+					aria-label={tab.title}
+					class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-full'}`}
+					bind:pressed
+					onclick={(event) => onTabClick(event, tab, i)}
+				>
+					<img
+						src={tab.favIconUrl}
+						alt={tab.title}
+						height="12"
+						width="12"
+						class={`h-3 w-3 ${listView ? 'absolute' : ''}`}
+					/>
+					{#if listView}
+						<span class={`pl-5 text-start ${truncateTabTitle ? 'truncate' : ''}`}>
+							{showTabUrl ? extractURL(tab.url!) : tab.title}
+						</span>
+						<span class="ml-auto flex gap-2 pl-1">
+							{#if tab.mutedInfo?.muted}
+								<SpeakerOff size="16" />
+							{/if}
+							{#if tab.pinned}
+								<DrawingPin size="16" />
+							{/if}
+						</span>
+					{/if}
+				</Toggle>
+			</div>
+		{/snippet}
 	</Tooltip.Trigger>
 	<Tooltip.Content side="top" class="max-w-[286px]">
 		<p>{showTabUrl ? extractURL(tab.url!) : tab.title}</p>

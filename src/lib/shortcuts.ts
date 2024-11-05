@@ -9,10 +9,12 @@ import { createEmptyWindow } from './chrome/windows';
 //*-----------------------------------------------------------------------*//
 //*----------------------------- Bottom nav -------------------------------*//
 //*-----------------------------------------------------------------------*//
-export function onSearch(event: KeyboardEvent, searchInput: HTMLElement) {
-	if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-		event.preventDefault();
-		searchInput.focus();
+export function onSearch(event: KeyboardEvent, searchInput: HTMLInputElement | null) {
+	if (searchInput) {
+		if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+			event.preventDefault();
+			searchInput.focus();
+		}
 	}
 }
 

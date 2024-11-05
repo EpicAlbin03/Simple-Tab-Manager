@@ -20,6 +20,12 @@
 			</FormField>
 
 			<Separator orientation="horizontal" class="my-2" />
+			<legend class="text-base font-medium">Top Navigation</legend>
+			<FormField desc="Export windows">
+				<Kbd><span class="text-xs">⌘</span>+ SHIFT + S</Kbd>
+			</FormField>
+
+			<Separator orientation="horizontal" class="my-2" />
 			<legend class="text-base font-medium">Bottom Navigation</legend>
 			<FormField desc="Focus search bar">
 				<Kbd><span class="text-xs">⌘</span>+ K</Kbd>
@@ -38,12 +44,6 @@
 			</FormField>
 			<FormField desc="Close selected tabs">
 				<Kbd><span class="text-xs">⌘</span>+ SHIFT + DEL</Kbd>
-			</FormField>
-
-			<Separator orientation="horizontal" class="my-2" />
-			<legend class="text-base font-medium">Top Navigation</legend>
-			<FormField desc="Export windows">
-				<Kbd><span class="text-xs">⌘</span>+ SHIFT + S</Kbd>
 			</FormField>
 		</div>
 	</Card.Content>

@@ -20,17 +20,19 @@
 
 	let twColors = getColors();
 	let name = $state(window.name);
-	let color = $state(window.color);
+	let color = $state(window.color ?? 'default');
 	let open = $state(false);
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Trigger class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'h-6 w-6')}>
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button builders={[builder]} variant="ghost" size="icon" class="h-6 w-6">
-					<Pencil2 size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="ghost" size="icon" class="h-6 w-6">
+						<Pencil2 size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Edit window</p>
@@ -77,7 +79,6 @@
 							{/if}
 						{/each}
 					</div>
-					<RadioGroup.Input name="color" />
 				</RadioGroup.Root>
 			</div>
 		</div>

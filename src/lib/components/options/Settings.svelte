@@ -20,8 +20,6 @@
 	let sortDescending = $state(optionsStore.options.sortDescending);
 	let disableTooltips = $state(optionsStore.options.disableTooltips);
 	let truncateTabTitle = $state(optionsStore.options.truncateTabTitle);
-
-	// TODO: Add option to disable tooltips when bit-ui hits 1.0
 </script>
 
 <Card.Root>
@@ -54,21 +52,23 @@
 				<Switch bind:checked={sortDescending} />
 			</FormField>
 
-			<!-- <Separator orientation="horizontal" class="my-2" />
+			<Separator orientation="horizontal" class="my-2" />
 			<legend class="text-base font-medium">Tooltips</legend>
 			<FormField desc="Disable tooltips">
-				<Switch bind:checked={disableTooltips} disabled />
-			</FormField> -->
+				<Switch bind:checked={disableTooltips} />
+			</FormField>
 		</div>
 	</Card.Content>
 
 	<Card.Footer class="flex justify-between">
 		<AlertDialog.Root>
-			<AlertDialog.Trigger asChild let:builder>
-				<Button builders={[builder]} variant="destructive">
-					<Reset size="16" class="mr-2" />
-					Reset
-				</Button>
+			<AlertDialog.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="destructive">
+						<Reset size="16" class="mr-2" />
+						Reset
+					</Button>
+				{/snippet}
 			</AlertDialog.Trigger>
 			<AlertDialog.Content>
 				<AlertDialog.Header>
@@ -79,23 +79,25 @@
 				</AlertDialog.Header>
 				<AlertDialog.Footer>
 					<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-					<AlertDialog.Action asChild let:builder>
-						<Button
-							builders={[builder]}
-							variant="destructive"
-							onclick={async () => {
-								windowMaxHeight = defaultSettings.windowMaxHeight;
-								showTabUrl = defaultSettings.showTabUrl;
-								sortByUrl = defaultSettings.sortByUrl;
-								sortDescending = defaultSettings.sortDescending;
-								disableTooltips = defaultSettings.disableTooltips;
-								truncateTabTitle = defaultSettings.truncateTabTitle;
-								optionsStore.updateOptions(defaultSettings);
-							}}
-						>
-							<Reset size="16" class="mr-2" />
-							Reset
-						</Button>
+					<AlertDialog.Action>
+						{#snippet child({ props })}
+							<Button
+								{...props}
+								variant="destructive"
+								onclick={async () => {
+									windowMaxHeight = defaultSettings.windowMaxHeight;
+									showTabUrl = defaultSettings.showTabUrl;
+									sortByUrl = defaultSettings.sortByUrl;
+									sortDescending = defaultSettings.sortDescending;
+									disableTooltips = defaultSettings.disableTooltips;
+									truncateTabTitle = defaultSettings.truncateTabTitle;
+									optionsStore.updateOptions(defaultSettings);
+								}}
+							>
+								<Reset size="16" class="mr-2" />
+								Reset
+							</Button>
+						{/snippet}
 					</AlertDialog.Action>
 				</AlertDialog.Footer>
 			</AlertDialog.Content>

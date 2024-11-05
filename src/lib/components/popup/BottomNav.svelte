@@ -51,103 +51,115 @@
 	<Search />
 
 	<div class="flex gap-1">
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => await createEmptyWindow()}
-				>
-					<Plus size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => await createEmptyWindow()}
+					>
+						<Plus size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>New window</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => await createTab('chrome://bookmarks/')}
-				>
-					<Bookmark size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => await createTab('chrome://bookmarks/')}
+					>
+						<Bookmark size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Bookmark manager</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => await muteSelectedTabs()}
-				>
-					<SpeakerOff size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => await muteSelectedTabs()}
+					>
+						<SpeakerOff size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Mute ({getSelectedTabs().length}) tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => await togglePinSelectedTabs()}
-				>
-					<DrawingPin size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => await togglePinSelectedTabs()}
+					>
+						<DrawingPin size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Pin ({getSelectedTabs().length}) tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => await removeSelectedTabs()}
-				>
-					<Trash size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => await removeSelectedTabs()}
+					>
+						<Trash size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Close ({getSelectedTabs().length}) tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => {
-						tabView = tabView === 'list' ? 'grid' : 'list';
-						optionsStore.updateOptions({ tabView });
-					}}
-				>
-					{#if tabView === 'list'}
-						<ListBullet size="16" />
-					{:else}
-						<Grid size="16" />
-					{/if}
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => {
+							tabView = tabView === 'list' ? 'grid' : 'list';
+							optionsStore.updateOptions({ tabView });
+						}}
+					>
+						{#if tabView === 'list'}
+							<ListBullet size="16" />
+						{:else}
+							<Grid size="16" />
+						{/if}
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				{#if tabView === 'list'}

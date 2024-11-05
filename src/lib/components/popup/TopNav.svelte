@@ -150,14 +150,16 @@
 	<div class="flex gap-1">
 		<Dialog.Root bind:open={importDialogOpen}>
 			<Dialog.Trigger class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}>
-				<Tooltip.Root group>
-					<Tooltip.Trigger asChild let:builder>
-						<Button builders={[builder]} variant="ghost" size="icon">
-							<Upload size="16" />
-						</Button>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<Button {...props} variant="ghost" size="icon">
+								<Upload size="16" />
+							</Button>
+						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<p>Import</p>
+						<p class="font-normal">Import</p>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</Dialog.Trigger>
@@ -172,13 +174,15 @@
 				<div class="grid gap-8 py-4">
 					<div class="grid w-full max-w-sm items-center gap-1">
 						<HoverCard.Root>
-							<HoverCard.Trigger asChild let:builder>
-								<div use:builder.action {...builder} class="flex items-center gap-1">
-									<Label for="json">JSON File</Label>
-									<QuestionMarkCircled size="16" />
-								</div>
+							<HoverCard.Trigger>
+								{#snippet child({ props })}
+									<div {...props} class="flex w-fit items-center gap-1">
+										<Label for="json">JSON File</Label>
+										<QuestionMarkCircled size="16" />
+									</div>
+								{/snippet}
 							</HoverCard.Trigger>
-							<HoverCard.Content>
+							<HoverCard.Content align="start" class="w-fit">
 								<pre>{JSON.stringify(WindowInfoType, null, 2)}</pre>
 							</HoverCard.Content>
 						</HoverCard.Root>
@@ -255,11 +259,13 @@ https://www.example.com"
 			</Dialog.Content>
 		</Dialog.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button builders={[builder]} variant="ghost" size="icon" onclick={() => exportWindows()}>
-					<Download size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="ghost" size="icon" onclick={() => exportWindows()}>
+						<Download size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Export</p>
@@ -268,36 +274,40 @@ https://www.example.com"
 	</div>
 
 	<div class="ml-auto flex gap-1">
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button builders={[builder]} variant="ghost" size="icon" href="/options">
-					<Gear size="16" />
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button {...props} variant="ghost" size="icon" href="/options">
+						<Gear size="16" />
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Options</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root group>
-			<Tooltip.Trigger asChild let:builder>
-				<Button
-					builders={[builder]}
-					variant="ghost"
-					size="icon"
-					onclick={async () => {
-						theme = theme === 'light' ? 'dark' : 'light';
-						setTheme(theme);
-						optionsStore.updateOptions({ theme });
-					}}
-				>
-					{#if theme === 'light'}
-						<Sun size="16" />
-					{:else}
-						<Moon size="16" />
-					{/if}
-					<span class="sr-only">Toggle theme</span>
-				</Button>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				{#snippet child({ props })}
+					<Button
+						{...props}
+						variant="ghost"
+						size="icon"
+						onclick={async () => {
+							theme = theme === 'light' ? 'dark' : 'light';
+							setTheme(theme);
+							optionsStore.updateOptions({ theme });
+						}}
+					>
+						{#if theme === 'light'}
+							<Sun size="16" />
+						{:else}
+							<Moon size="16" />
+						{/if}
+						<span class="sr-only">Toggle theme</span>
+					</Button>
+				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				{#if theme === 'light'}

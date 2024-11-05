@@ -15,22 +15,26 @@
 	let listView = $derived(optionsStore.options.tabView === 'list');
 
 	let searchValue = $state('');
-	let searchInput = $state() as HTMLInputElement;
+	let searchInput = $state(null) as HTMLInputElement | null;
 	let kbd: HTMLElement;
 
 	$effect(() => {
-		document.addEventListener('keydown', (event: KeyboardEvent) => onSearch(event, searchInput));
-		searchInput.addEventListener('focus', (event: FocusEvent) => onFocusSearch(event, kbd));
-		searchInput.addEventListener('focusout', (event: FocusEvent) => onFocusoutSearch(event, kbd));
+		if (searchInput) {
+			document.addEventListener('keydown', (event: KeyboardEvent) => onSearch(event, searchInput));
+			searchInput.addEventListener('focus', (event: FocusEvent) => onFocusSearch(event, kbd));
+			searchInput.addEventListener('focusout', (event: FocusEvent) => onFocusoutSearch(event, kbd));
+		}
 
 		return () => {
-			document.removeEventListener('keydown', (event: KeyboardEvent) =>
-				onSearch(event, searchInput)
-			);
-			searchInput.removeEventListener('focus', (event: FocusEvent) => onFocusSearch(event, kbd));
-			searchInput.removeEventListener('focusout', (event: FocusEvent) =>
-				onFocusoutSearch(event, kbd)
-			);
+			if (searchInput) {
+				document.removeEventListener('keydown', (event: KeyboardEvent) =>
+					onSearch(event, searchInput)
+				);
+				searchInput.removeEventListener('focus', (event: FocusEvent) => onFocusSearch(event, kbd));
+				searchInput.removeEventListener('focusout', (event: FocusEvent) =>
+					onFocusoutSearch(event, kbd)
+				);
+			}
 		};
 	});
 
@@ -85,24 +89,26 @@
 		</kbd>
 	</div>
 
-	<Tooltip.Root group>
-		<Tooltip.Trigger asChild let:builder>
-			<Button
-				builders={[builder]}
-				variant="ghost"
-				size="icon"
-				onclick={async () => {
-					searchView = searchView === 'show' ? 'hide' : 'show';
-					await search();
-					optionsStore.updateOptions({ searchView });
-				}}
-			>
-				{#if searchView === 'show'}
-					<EyeOpen size="16" />
-				{:else}
-					<EyeNone size="16" />
-				{/if}
-			</Button>
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					variant="ghost"
+					size="icon"
+					onclick={async () => {
+						searchView = searchView === 'show' ? 'hide' : 'show';
+						await search();
+						optionsStore.updateOptions({ searchView });
+					}}
+				>
+					{#if searchView === 'show'}
+						<EyeOpen size="16" />
+					{:else}
+						<EyeNone size="16" />
+					{/if}
+				</Button>
+			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			{#if searchView === 'show'}

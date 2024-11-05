@@ -43,34 +43,38 @@
 						<EditWindow {window} {i} />
 					{/key}
 
-					<Tooltip.Root group>
-						<Tooltip.Trigger asChild let:builder>
-							<Button
-								builders={[builder]}
-								variant="ghost"
-								size="icon"
-								class="h-6 w-6"
-								onclick={async () => await quickSort(window, sortingOption, sortDescending)}
-							>
-								<CaretSort size="16" />
-							</Button>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<Button
+									{...props}
+									variant="ghost"
+									size="icon"
+									class="h-6 w-6"
+									onclick={async () => await quickSort(window, sortingOption, sortDescending)}
+								>
+									<CaretSort size="16" />
+								</Button>
+							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content>
 							<p>Quicksort</p>
 						</Tooltip.Content>
 					</Tooltip.Root>
 
-					<Tooltip.Root group>
-						<Tooltip.Trigger asChild let:builder>
-							<Button
-								builders={[builder]}
-								variant="ghost"
-								size="icon"
-								class="h-6 w-6"
-								onclick={async () => await createEmptyTab(window.id!)}
-							>
-								<Plus size="16" />
-							</Button>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							{#snippet child({ props })}
+								<Button
+									{...props}
+									variant="ghost"
+									size="icon"
+									class="h-6 w-6"
+									onclick={async () => await createEmptyTab(window.id!)}
+								>
+									<Plus size="16" />
+								</Button>
+							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content>
 							<p>New tab</p>
@@ -80,21 +84,23 @@
 			</div>
 
 			<div class="flex gap-0">
-				<Tooltip.Root group>
-					<Tooltip.Trigger asChild let:builder>
-						<Button
-							builders={[builder]}
-							variant="ghost"
-							size="icon"
-							class="h-6 w-6"
-							onclick={async () => await minimizeWindow(window.id!, !minimized)}
-						>
-							{#if minimized}
-								<CaretDown size="16" />
-							{:else}
-								<CaretUp size="16" />
-							{/if}
-						</Button>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<Button
+								{...props}
+								variant="ghost"
+								size="icon"
+								class="h-6 w-6"
+								onclick={async () => await minimizeWindow(window.id!, !minimized)}
+							>
+								{#if minimized}
+									<CaretDown size="16" />
+								{:else}
+									<CaretUp size="16" />
+								{/if}
+							</Button>
+						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
 						{#if minimized}
@@ -105,17 +111,19 @@
 					</Tooltip.Content>
 				</Tooltip.Root>
 
-				<Tooltip.Root group>
-					<Tooltip.Trigger asChild let:builder>
-						<Button
-							builders={[builder]}
-							variant="ghost"
-							size="icon"
-							class="h-6 w-6"
-							onclick={async () => await removeWindow(window.id!)}
-						>
-							<Cross2 size="16" />
-						</Button>
+				<Tooltip.Root>
+					<Tooltip.Trigger>
+						{#snippet child({ props })}
+							<Button
+								{...props}
+								variant="ghost"
+								size="icon"
+								class="h-6 w-6"
+								onclick={async () => await removeWindow(window.id!)}
+							>
+								<Cross2 size="16" />
+							</Button>
+						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
 						<p>Close window</p>

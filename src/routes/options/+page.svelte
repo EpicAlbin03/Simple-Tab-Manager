@@ -10,18 +10,20 @@
 </script>
 
 <div class="flex h-full w-full justify-center border p-12">
-	<Tooltip.Root group>
-		<Tooltip.Trigger asChild let:builder>
-			<Button
-				builders={[builder]}
-				href="/"
-				variant="ghost"
-				size="icon"
-				class="absolute left-12"
-				onclick={() => toast.dismiss()}
-			>
-				<ArrowLeft size="16" />
-			</Button>
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
+					href="/"
+					variant="ghost"
+					size="icon"
+					class="absolute left-12"
+					onclick={() => toast.dismiss()}
+				>
+					<ArrowLeft size="16" />
+				</Button>
+			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Content side="bottom">
 			<p>Go back</p>
