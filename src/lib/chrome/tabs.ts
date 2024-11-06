@@ -79,12 +79,16 @@ export async function openTab(tabId: number, windowId: number) {
 	return await chrome.tabs.update(tabId, { active: true });
 }
 
-export async function createEmptyTab(windowId: number) {
-	return await chrome.tabs.create({ active: true, windowId });
+export async function createEmptyTab(windowId: number, index: number | undefined = undefined) {
+	return await chrome.tabs.create({ active: true, windowId, index });
 }
 
 export async function createTab(url: string) {
 	return await chrome.tabs.create({ active: true, url });
+}
+
+export async function duplicateTab(url: string, index: number, pinned: boolean) {
+	return await chrome.tabs.create({ active: true, url, index, pinned });
 }
 
 export async function getTab(tabId: number) {

@@ -311,9 +311,9 @@ https://www.example.com"
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				{#if theme === 'light'}
-					<p>Dark theme</p>
+					<p>Dark Theme</p>
 				{:else}
-					<p>Light theme</p>
+					<p>Light Theme</p>
 				{/if}
 			</Tooltip.Content>
 		</Tooltip.Root>

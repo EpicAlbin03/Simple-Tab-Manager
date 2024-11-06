@@ -35,7 +35,7 @@
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Edit window</p>
+				<p class="font-normal">Edit window</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</Dialog.Trigger>

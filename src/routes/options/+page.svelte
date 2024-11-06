@@ -26,7 +26,7 @@
 			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Content side="bottom">
-			<p>Go back</p>
+			<p>Go Back</p>
 		</Tooltip.Content>
 	</Tooltip.Root>
 

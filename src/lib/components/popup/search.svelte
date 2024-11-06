@@ -112,9 +112,9 @@
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			{#if searchView === 'show'}
-				<p>Hide tabs</p>
+				<p>Hide Tabs</p>
 			{:else}
-				<p>Show tabs</p>
+				<p>Show Tabs</p>
 			{/if}
 		</Tooltip.Content>
 	</Tooltip.Root>

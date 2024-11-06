@@ -65,7 +65,7 @@
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>New window</p>
+				<p>New Window</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -83,7 +83,7 @@
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Bookmark manager</p>
+				<p>Bookmark Manager</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -101,7 +101,7 @@
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Mute ({getSelectedTabs().length}) tabs</p>
+				<p>Mute ({getSelectedTabs().length}) Tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -119,7 +119,7 @@
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Pin ({getSelectedTabs().length}) tabs</p>
+				<p>Pin ({getSelectedTabs().length}) Tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -137,7 +137,7 @@
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Close ({getSelectedTabs().length}) tabs</p>
+				<p>Close ({getSelectedTabs().length}) Tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -163,9 +163,9 @@
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				{#if tabView === 'list'}
-					<p>Grid view</p>
+					<p>Grid View</p>
 				{:else}
-					<p>List view</p>
+					<p>List View</p>
 				{/if}
 			</Tooltip.Content>
 		</Tooltip.Root>
