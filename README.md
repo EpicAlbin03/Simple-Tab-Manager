@@ -3,7 +3,7 @@
 </p>
 <br/>
 <p align="center">
-  <a rel="noreferrer noopener" href="https://chrome.google.com/webstore/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc/">
+  <a rel="noreferrer noopener" href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc">
     <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white">
   </a>
   <a rel="noreferrer noopener" href="https://ko-fi.com/albincarlsson">
