@@ -17,28 +17,36 @@
   <strong>browser extension</strong> that allows you to easily manage and sort tabs.
 </p>
 <br/>
-<br/>
 
 ## Functionality
 
 ### Windows
 
-- Open and close windows
-- Minimize and maximize windows
-- Add new tab to window
-- Customize the title and color of the window (UI only)
+- Open, close, and minimize windows
+- Change window title
+- Color code windows
 
 ### Tabs
 
-- Open and close tabs
-- Pin and unpin tabs
-- Mute and unmute tabs
+- Open, close, mute, pin, refresh, duplicate tabs
 - Move tabs within and between windows
-- Select multiple tabs at once with Right-Click or Ctrl+Click
+- Select multiple tabs at once
 - Sort tabs by title or url
-- Filter tabs by search
+- Easily find tabs by searching
 
 ### Other
 
 - Supports dark mode
-- Supports a more compact view (grid view)
+- An alternative, more compact view (grid view)
+- Use shortcuts to quickly perform actions
+- Export and import windows and tabs
+
+<br/>
+
+## TODO
+
+- Firefox support
+- Implement tab groups
+- Add playwright tests
+- Potentially add the option to create an account to store windows across devices ([#1](https://github.com/EpicAlbin03/Simple-Tab-Manager/issues/1))
+- Potentially highlight focused window

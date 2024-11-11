@@ -1,51 +1,114 @@
-import { windowsStore, environmentStore } from '$lib/stores';
-import { windows } from '$lib/dummydata';
-import { get } from 'svelte/store';
+import { dummyWindows } from '$lib/dummydata';
+import { windowsStore } from '$lib/stores.svelte';
+import { clearSelectedTabs } from './tabs';
+import { isChromeExtension } from './utils';
 
+//*-----------------------------------------------------------------------*//
+//*------------------------------- Events --------------------------------*//
+//*-----------------------------------------------------------------------*//
 export function addWindowEventListeners() {
-	chrome.windows.onCreated.addListener(() => {
-		windowsStore.reload?.();
-	});
-	chrome.windows.onRemoved.addListener(() => {
-		windowsStore.reload?.();
-	});
-	chrome.windows.onFocusChanged.addListener(() => {
-		windowsStore.reload?.();
-	});
-}
+	if (isChromeExtension()) {
+		chrome.windows.onCreated.addListener(async (window) => {
+			if (window.id) {
+				await createWindowCallback(window.id);
+			}
+		});
 
-export async function getAllWindows() {
-	const env = get(environmentStore);
-	if (env === 'prod') {
-		return await chrome.windows.getAll({ populate: true });
-	} else {
-		return new Promise((resolve) => {
-			resolve(windows);
+		chrome.windows.onRemoved.addListener(async (windowId) => await removeWindowCallback(windowId));
+
+		chrome.windows.onFocusChanged.addListener(async (windowId) => {
+			if (windowId !== chrome.windows.WINDOW_ID_NONE) {
+				await updateWindowCallback(windowId);
+			}
+		});
+
+		chrome.windows.onBoundsChanged.addListener(async (window) => {
+			if (window.id) {
+				await updateWindowCallback(window.id);
+			}
 		});
 	}
 }
 
-export async function getWindow(windowId: number) {
-	return await chrome.windows.get(windowId, { populate: true });
+export function removeWindowEventListeners() {
+	if (isChromeExtension()) {
+		chrome.windows.onCreated.removeListener(async (window) => {
+			if (window.id) {
+				await createWindowCallback(window.id);
+			}
+		});
+
+		chrome.windows.onRemoved.removeListener(
+			async (windowId) => await removeWindowCallback(windowId)
+		);
+
+		chrome.windows.onFocusChanged.removeListener(async (windowId) => {
+			if (windowId !== chrome.windows.WINDOW_ID_NONE) {
+				await updateWindowCallback(windowId);
+			}
+		});
+
+		chrome.windows.onBoundsChanged.removeListener(async (window) => {
+			if (window.id) {
+				await updateWindowCallback(window.id);
+			}
+		});
+	}
+}
+
+async function createWindowCallback(windowId: number) {
+	const populatedWindow = await getWindow(windowId, { populate: true });
+	windowsStore.addWindow(populatedWindow);
+	clearSelectedTabs();
+}
+
+async function removeWindowCallback(windowId: number) {
+	windowsStore.removeWindow(windowId);
+	clearSelectedTabs();
+}
+
+// ? Possibly keep selection after focused changed
+async function updateWindowCallback(windowId: number) {
+	const window = await getWindow(windowId, { populate: true });
+	windowsStore.updateWindow(window);
+	clearSelectedTabs();
+}
+
+//*-----------------------------------------------------------------------*//
+//*----------------------------- Functions -------------------------------*//
+//*-----------------------------------------------------------------------*//
+export async function getAllWindows() {
+	if (isChromeExtension()) {
+		const windows = await chrome.windows.getAll({ populate: true });
+		const lastFocusedWindow = await chrome.windows.getLastFocused();
+		const index = windows.findIndex((window) => window.id === lastFocusedWindow.id);
+		windows[index].focused = true;
+		return windows;
+	} else {
+		return windowsStore.windows.length > 0 ? windowsStore.windows : dummyWindows;
+	}
+}
+
+export async function getWindow(windowId: number, queryOptions: chrome.windows.QueryOptions = {}) {
+	return await chrome.windows.get(windowId, queryOptions);
+}
+
+export async function getLastFocusedWindow() {
+	return await chrome.windows.getLastFocused();
 }
 
 export async function createEmptyWindow() {
-	await chrome.windows.create({ focused: true });
+	return await chrome.windows.create({ focused: true });
 }
 
 export async function removeWindow(windowId: number) {
 	return await chrome.windows.remove(windowId);
 }
 
-export async function openWindow(windowId: number) {
-	return await chrome.windows.update(windowId, { focused: true });
-}
-
-export async function toggleMinimizedWindow(windowId: number) {
-	const window = await getWindow(windowId);
-	if (window.state === 'minimized') {
-		return await chrome.windows.update(windowId, { state: 'normal', focused: true });
-	} else {
+export async function minimizeWindow(windowId: number, minimized: boolean) {
+	if (minimized) {
 		return await chrome.windows.update(windowId, { state: 'minimized' });
+	} else {
+		return await chrome.windows.update(windowId, { state: 'normal' });
 	}
 }
