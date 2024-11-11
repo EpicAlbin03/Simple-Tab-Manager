@@ -1,52 +1,40 @@
 <script lang="ts">
-	import WindowMenu from './WindowMenu.svelte';
-	import { addWindowEventListeners } from '$lib/chrome/windows';
-	import { afterUpdate, onMount } from 'svelte';
-	import { addGridRowSpan } from '$lib/popup';
-	// @ts-ignore
-	import CloseCircleOutline from 'svelte-ionicons/CloseCircleOutline.svelte';
-	import BottomNav from './BottomNav.svelte';
-	import TopNav from './TopNav.svelte';
-	import { addTabEventListeners } from '$lib/chrome/tabs';
-	import Sortable, { MultiDrag } from 'sortablejs';
-	import { windowsStore } from '$lib/stores';
-	import { handleTooltips } from '$lib/tooltips';
+	import { addTabEventListeners, removeTabEventListeners } from '$lib/chrome/tabs';
+	import { addWindowEventListeners, removeWindowEventListeners } from '$lib/chrome/windows';
+	import BottomNav from '$lib/components/popup/BottomNav.svelte';
+	import TopNav from '$lib/components/popup/TopNav.svelte';
+	import Window from '$lib/components/popup/Window.svelte';
+	import { windowsStore } from '$lib/stores.svelte';
 
-	onMount(async () => {
-		try {
-			Sortable.mount(new MultiDrag());
-		} catch (error) {}
+	$effect(() => {
 		addWindowEventListeners();
 		addTabEventListeners();
-	});
 
-	afterUpdate(async () => {
-		addGridRowSpan();
-		await handleTooltips();
+		return () => {
+			removeWindowEventListeners();
+			removeTabEventListeners();
+		};
 	});
 </script>
 
-<div class="h-full w-full">
-	<TopNav />
-	<div class="h-[500px] overflow-auto">
-		{#await $windowsStore}
-			<div class="flex justify-center items-center h-full">
-				<span class="loading loading-spinner" />
-			</div>
-		{:then windows}
-			<div class="grid grid-cols-[repeat(auto-fit,_minmax(0,_20rem))] gap-2 p-2">
-				{#each windows as window, i (window.id)}
-					<WindowMenu {window} {i} />
-				{/each}
-			</div>
-		{:catch error}
-			<div class="flex justify-center items-center h-full">
-				<div class="badge badge-error badge-lg gap-2 text-sm">
-					<CloseCircleOutline size="16" />
-					Error loading windows. Please try again!
+{#if typeof window !== 'undefined'}
+	{#await windowsStore.refreshWindows()}
+		<p>loading...</p>
+	{:then windows}
+		<div class="flex h-full w-full flex-col justify-between bg-muted/40">
+			<TopNav />
+
+			<div class="scrollable h-full overflow-auto p-2">
+				<div class="flex flex-wrap gap-2">
+					{#each windowsStore.windows as window, i}
+						<Window {window} {i} />
+					{/each}
 				</div>
 			</div>
-		{/await}
-	</div>
-	<BottomNav />
-</div>
+
+			<BottomNav />
+		</div>
+	{:catch error}
+		<p>error</p>
+	{/await}
+{/if}

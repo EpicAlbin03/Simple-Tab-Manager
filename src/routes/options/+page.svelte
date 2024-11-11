@@ -1,64 +1,52 @@
 <script lang="ts">
-	import { handleTooltips } from '$lib/tooltips';
-	import { afterUpdate } from 'svelte';
-	// @ts-ignore
-	import ArrowBackOutline from 'svelte-ionicons/ArrowBackOutline.svelte';
-	import Settings from './Settings.svelte';
-	import Keybinds from './Keybinds.svelte';
-	import About from './About.svelte';
-
-	let activeTab = 'Settings';
-
-	function toggleActiveTab(e: MouseEvent) {
-		if (e.target instanceof HTMLButtonElement) {
-			e.target.classList.add('tab-active');
-			activeTab = e.target.textContent?.toString() ?? '';
-			const tabs = document.querySelectorAll('.tab');
-			for (const tab of tabs) {
-				if (tab !== e.target) {
-					tab.classList.remove('tab-active');
-				}
-			}
-		}
-	}
-
-	afterUpdate(async () => {
-		await handleTooltips();
-	});
+	import * as Tabs from '$lib/components/ui/tabs/index.js';
+	import { Button } from '$lib/components/ui/button/index.js';
+	import ArrowLeft from 'svelte-radix/ArrowLeft.svelte';
+	import { toast } from 'svelte-sonner';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import About from '$lib/components/options/About.svelte';
+	import Settings from '$lib/components/options/Settings.svelte';
+	import Shortcuts from '$lib/components/options/Shortcuts.svelte';
 </script>
 
-<div class="flex justify-center items-center h-full bg-base-200">
-	<div class="card w-96 bg-base-100 shadow-xl">
-		<div class="card-body gap-8">
-			<div class="flex justify-center items-center">
-				<a
-					role="button"
+<div class="flex h-full w-full justify-center border p-12">
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			{#snippet child({ props })}
+				<Button
+					{...props}
 					href="/"
-					tabindex="0"
-					class="btn btn-xs btn-circle w-fit h-fit min-h-0 bg-transparent border-transparent absolute left-8 bottomTippy"
-					data-tippy-content="Go back"
+					variant="ghost"
+					size="icon"
+					class="absolute left-12"
+					onclick={() => toast.dismiss()}
 				>
-					<ArrowBackOutline size="16" />
-				</a>
-				<div class="tabs w-fit">
-					<button class="tab tab-sm tab-lifted tab-active" on:click={(e) => toggleActiveTab(e)}>
-						Settings
-					</button>
-					<button class="tab tab-sm tab-lifted" on:click={(e) => toggleActiveTab(e)}>
-						Keybinds
-					</button>
-					<button class="tab tab-sm tab-lifted" on:click={(e) => toggleActiveTab(e)}>
-						About
-					</button>
-				</div>
-			</div>
-			{#if activeTab === 'Settings'}
-				<Settings />
-			{:else if activeTab === 'Keybinds'}
-				<Keybinds />
-			{:else if activeTab === 'About'}
-				<About />
-			{/if}
-		</div>
-	</div>
+					<ArrowLeft size="16" />
+				</Button>
+			{/snippet}
+		</Tooltip.Trigger>
+		<Tooltip.Content side="bottom">
+			<p>Go Back</p>
+		</Tooltip.Content>
+	</Tooltip.Root>
+
+	<Tabs.Root value="settings" class="w-[400px]">
+		<Tabs.List class="grid w-full grid-cols-3">
+			<Tabs.Trigger value="settings">Settings</Tabs.Trigger>
+			<Tabs.Trigger value="shortcuts">Shortcuts</Tabs.Trigger>
+			<Tabs.Trigger value="about">About</Tabs.Trigger>
+		</Tabs.List>
+
+		<Tabs.Content value="settings" class="scrollable max-h-[440px] overflow-y-auto">
+			<Settings />
+		</Tabs.Content>
+
+		<Tabs.Content value="shortcuts" class="scrollable max-h-[440px] overflow-y-auto">
+			<Shortcuts />
+		</Tabs.Content>
+
+		<Tabs.Content value="about" class="scrollable max-h-[440px] overflow-y-auto">
+			<About />
+		</Tabs.Content>
+	</Tabs.Root>
 </div>
