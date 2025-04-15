@@ -5,7 +5,6 @@
 	import Star from 'svelte-radix/Star.svelte';
 	import FormField from '$lib/components/options/FormField.svelte';
 	import { getExtensionVersion } from '$lib/chrome/utils';
-	import Kofi from '$lib/images/kofi.webp';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 </script>
 
@@ -26,16 +25,6 @@
 
 			<Separator orientation="horizontal" class="my-2" />
 			<legend class="text-base font-medium">Support</legend>
-			<FormField desc="Support me on Ko-fi">
-				<Button
-					href="https://ko-fi.com/albincarlsson"
-					target="_blank"
-					variant="outline"
-					size="icon"
-				>
-					<img src={Kofi} alt="Support me on Ko-fi" height="16" class="h-4" />
-				</Button>
-			</FormField>
 			<FormField desc="Rate the extension on Chrome Web Store">
 				<Button
 					href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc/reviews"
