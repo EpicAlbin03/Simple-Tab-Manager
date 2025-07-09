@@ -6,9 +6,6 @@
   <a rel="noreferrer noopener" href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc">
     <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white">
   </a>
-  <a rel="noreferrer noopener" href="https://ko-fi.com/albincarlsson">
-    <img alt="Support me on Ko-Fi" src="https://storage.ko-fi.com/cdn/brandasset/kofi_button_red.png" height="28">
-  </a>
 <h1 align="center">Simple Tab Manager</h1>
 <br/>
 <p align="center">
