@@ -3,7 +3,7 @@
 </p>
 <br/>
 <p align="center">
-  <a rel="noreferrer noopener" href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc">
+  <a rel="noreferrer noopener" href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc" target="_blank">
     <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white">
   </a>
 <h1 align="center">Simple Tab Manager</h1>
