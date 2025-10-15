@@ -1,38 +1,46 @@
-# sv
+<p align="center">
+  <img alt="Simple Tab Manager logo" src="./static/images/icon-128x128.png">
+</p>
+<br/>
+<p align="center">
+  <a rel="noreferrer noopener" href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc" target="_blank">
+    <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white">
+  </a>
+<h1 align="center">Simple Tab Manager</h1>
+<br/>
+<p align="center">
+  Simple Tab Manager is an
+  <strong>open-source</strong> MIT-licensed
+  <strong>browser extension</strong> that allows you to easily manage and sort tabs.
+</p>
+<br/>
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+## Functionality
 
-## Creating a project
+### Windows
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Open, close, and minimize windows
+- Change window title
+- Color code windows
 
-```sh
-# create a new project in the current directory
-npx sv create
+### Tabs
 
-# create a new project in my-app
-npx sv create my-app
-```
+- Open, close, mute, pin, refresh, duplicate tabs
+- Move tabs within and between windows
+- Select multiple tabs at once
+- Sort tabs by title or url
+- Easily find tabs by searching
 
-## Developing
+### Other
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- Supports dark mode
+- An alternative, more compact view (grid view)
+- Use shortcuts to quickly perform actions
+- Export and import windows and tabs
 
-```sh
-npm run dev
+<br/>
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Contributing
 
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Make sure to replace `node_modules/sveltekit-adapter-chrome-extension/index.js`
+with my [updated version](https://github.com/EpicAlbin03/sveltekit-adapter-chrome-extension/blob/main/index.js) to correctly remove inline scripts when building.
