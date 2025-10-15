@@ -8,6 +8,16 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	type ChromeTab = chrome.tabs.Tab & {
+		pressed?: boolean;
+	};
+
+	type ChromeWindow = Omit<chrome.windows.Window, 'tabs'> & {
+		tabs?: Tab[];
+		name?: string;
+		color?: string;
+	};
 }
 
 export {};

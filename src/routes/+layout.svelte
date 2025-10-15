@@ -3,8 +3,13 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { WindowStore, WindowStoreContext } from '$lib/stores/window-store.svelte';
+	import { OptionStore, OptionStoreContext } from '$lib/stores/option-store.svelte';
 
 	let { children } = $props();
+
+	WindowStoreContext.set(new WindowStore());
+	OptionStoreContext.set(new OptionStore());
 </script>
 
 <ModeWatcher />
