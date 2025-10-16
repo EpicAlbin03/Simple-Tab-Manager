@@ -4,12 +4,11 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { cn } from '$lib/utils';
-	import Pencil2 from 'svelte-radix/Pencil2.svelte';
+	import { cn, iconProps } from '$lib/utils';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import { windowsStore } from '$lib/stores.svelte';
 	import { setSessionStorageItem } from '$lib/chrome/storage';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { SquarePen } from '@lucide/svelte';
 
 	type Props = {
 		window: ChromeWindow;
@@ -30,12 +29,12 @@
 			<Tooltip.Trigger>
 				{#snippet child({ props })}
 					<Button {...props} variant="ghost" size="icon" class="h-6 w-6">
-						<Pencil2 size="16" />
+						<SquarePen {...iconProps} />
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p class="font-normal">Edit window</p>
+				<p class="font-normal">Edit</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 	</Dialog.Trigger>
@@ -86,15 +85,14 @@
 		<Dialog.Footer>
 			<Button
 				onclick={async () => {
-					windowsStore.windows[i].name = name;
-					windowsStore.windows[i].color = color;
-					await setSessionStorageItem(
-						`window-${windowsStore.windows[i].id}`,
-						JSON.stringify({ name, color })
-					);
+					window.name = name;
+					window.color = color;
+					await setSessionStorageItem(`window-${window.id}`, JSON.stringify({ name, color }));
 					open = false;
-				}}>Save</Button
+				}}
 			>
+				Save
+			</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

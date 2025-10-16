@@ -42,3 +42,16 @@ export async function getOptions() {
 export async function setOptions(items: Partial<Options>) {
 	await chrome.storage.sync.set(items);
 }
+
+export async function getSessionStorageItem(key: string) {
+	const { [key]: value } = await chrome.storage.session.get(key);
+	if (value !== undefined) {
+		return JSON.parse(value);
+	} else {
+		return {};
+	}
+}
+
+export async function setSessionStorageItem(key: string, value: string) {
+	await chrome.storage.session.set({ [key]: value });
+}

@@ -1,11 +1,26 @@
+import { getSessionStorageItem } from './storage';
 import { isChromeExtension } from './utils';
+
+type StoredWindow = {
+	name: string;
+	color: string;
+};
 
 export async function getAllWindows() {
 	if (isChromeExtension()) {
-		const windows = await chrome.windows.getAll({ populate: true });
+		const windows = (await chrome.windows.getAll({ populate: true })) as ChromeWindow[];
 		const lastFocusedWindow = await getLastFocusedWindow();
-		const index = windows.findIndex((window) => window.id === lastFocusedWindow.id);
-		windows[index].focused = true;
+		for (const [i, window] of windows.entries()) {
+			if (window.id === lastFocusedWindow.id) {
+				window.focused = true;
+			}
+			const storedWindow = (await getSessionStorageItem(`window-${window.id}`)) as StoredWindow;
+			window.name = storedWindow?.name ?? `Window ${i + 1}`;
+			window.color = storedWindow?.color ?? 'default';
+			for (const tab of window.tabs) {
+				tab.pressed = false;
+			}
+		}
 		return windows;
 	}
 }

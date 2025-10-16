@@ -7,6 +7,8 @@
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { minimizeWindow, removeWindow } from '$lib/chrome/windows';
 	import { createEmptyTab, quickSort } from '$lib/chrome/tabs';
+	import EditWindow from './EditWindow.svelte';
+	import { iconProps } from '$lib/utils';
 
 	type Props = {
 		window: ChromeWindow;
@@ -23,7 +25,7 @@
 </script>
 
 <Card.Root
-	class={`h-fit w-full max-w-xs ${window.focused ? '' : ''}`}
+	class="h-fit w-full max-w-xs gap-0 py-0"
 	style={window.color ? `border-color: hsl(${window.color})` : ''}
 >
 	<Card.Header class="flex flex-row items-center gap-2 space-y-0 p-4">
@@ -32,9 +34,9 @@
 				<Card.Title class="max-w-36 truncate text-base">{window.name}</Card.Title>
 
 				<div class="flex gap-0">
-					<!-- {#key window.name || window.color}
+					{#key window.name || window.color}
 						<EditWindow {window} {i} />
-					{/key} -->
+					{/key}
 
 					<Tooltip.Root>
 						<Tooltip.Trigger>
@@ -48,18 +50,18 @@
 										await quickSort(window, sortingOption, options.sortDescending)}
 								>
 									{#if options.sortDescending}
-										<ArrowDownZA size="16" />
+										<ArrowDownZA {...iconProps} />
 									{:else}
-										<ArrowUpAZ size="16" />
+										<ArrowUpAZ {...iconProps} />
 									{/if}
 								</Button>
 							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content>
 							{#if options.sortDescending}
-								<p>Sort descending</p>
+								<p>Sort Descending</p>
 							{:else}
-								<p>Sort ascending</p>
+								<p>Sort Ascending</p>
 							{/if}
 						</Tooltip.Content>
 					</Tooltip.Root>
@@ -74,12 +76,12 @@
 									class="h-6 w-6"
 									onclick={async () => await createEmptyTab(window.id!)}
 								>
-									<Plus size="16" />
+									<Plus {...iconProps} />
 								</Button>
 							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content>
-							<p>New tab</p>
+							<p>New Tab</p>
 						</Tooltip.Content>
 					</Tooltip.Root>
 				</div>
@@ -97,18 +99,18 @@
 								onclick={async () => await minimizeWindow(window.id!, !minimized)}
 							>
 								{#if minimized}
-									<ChevronDown size="16" />
+									<ChevronDown {...iconProps} />
 								{:else}
-									<ChevronUp size="16" />
+									<ChevronUp {...iconProps} />
 								{/if}
 							</Button>
 						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
 						{#if minimized}
-							<p>Maximize window</p>
+							<p>Maximize</p>
 						{:else}
-							<p>Minimize window</p>
+							<p>Minimize</p>
 						{/if}
 					</Tooltip.Content>
 				</Tooltip.Root>
@@ -123,12 +125,12 @@
 								class="h-6 w-6"
 								onclick={async () => await removeWindow(window.id!)}
 							>
-								<X size="16" />
+								<X {...iconProps} />
 							</Button>
 						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<p>Close window</p>
+						<p>Close</p>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</div>

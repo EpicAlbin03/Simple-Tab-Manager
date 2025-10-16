@@ -2,7 +2,7 @@
 	import { Toggle } from '$lib/components/ui/toggle';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
-	import { VolumeX, Pin, Plus, RotateCw, Copy, X } from '@lucide/svelte';
+	import { VolumeX, Pin, Plus, RotateCw, Copy, Trash2 } from '@lucide/svelte';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { extractURL } from '$lib/chrome/utils';
 	import {
@@ -14,6 +14,7 @@
 		reloadTab,
 		removeTab
 	} from '$lib/chrome/tabs';
+	import { iconProps } from '$lib/utils';
 
 	type Props = {
 		tab: ChromeTab;
@@ -23,7 +24,6 @@
 	};
 
 	let { tab, i, sortableWindow, listView }: Props = $props();
-	let pressed = $state(tab.pressed ?? false);
 
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
@@ -59,7 +59,7 @@
 							size="sm"
 							aria-label={tab.title}
 							class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-full'}`}
-							bind:pressed
+							bind:pressed={tab.pressed}
 							onclick={(event) => onTabClick(event, tab, i)}
 						>
 							<img
@@ -75,10 +75,10 @@
 								</span>
 								<span class="ml-auto flex gap-2 pl-1">
 									{#if tab.mutedInfo?.muted}
-										<VolumeX size="16" />
+										<VolumeX {...iconProps} />
 									{/if}
 									{#if tab.pinned}
-										<Pin size="16" />
+										<Pin {...iconProps} />
 									{/if}
 								</span>
 							{/if}
@@ -97,36 +97,36 @@
 			class="gap-2"
 			onclick={async () => await createEmptyTab(tab.windowId, tab.index + 1)}
 		>
-			<Plus size="16" />
-			New Tab Below
+			<Plus {...iconProps} class="text-foreground" />
+			New Tab
 		</ContextMenu.Item>
 		<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
 		<ContextMenu.Item class="gap-2" onclick={async () => await reloadTab(tab.id!)}>
-			<RotateCw size="16" />
-			Reload Tab
+			<RotateCw {...iconProps} class="text-foreground" />
+			Reload
 		</ContextMenu.Item>
 		<ContextMenu.Item
 			class="gap-2"
 			onclick={async () => await muteTab(tab.id!, !tab.mutedInfo?.muted)}
 		>
-			<VolumeX size="16" />
-			{tab.mutedInfo?.muted ? 'Unmute' : 'Mute'} Tab
+			<VolumeX {...iconProps} class="text-foreground" />
+			{tab.mutedInfo?.muted ? 'Unmute' : 'Mute'}
 		</ContextMenu.Item>
 		<ContextMenu.Item class="gap-2" onclick={async () => await pinTab(tab.id!, !tab.pinned)}>
-			<Pin size="16" />
-			{tab.pinned ? 'Unpin' : 'Pin'} Tab
+			<Pin {...iconProps} class="text-foreground" />
+			{tab.pinned ? 'Unpin' : 'Pin'}
 		</ContextMenu.Item>
 		<ContextMenu.Item
 			class="gap-2"
 			onclick={async () => await duplicateTab(tab.url!, tab.index + 1, tab.pinned)}
 		>
-			<Copy size="16" />
-			Duplicate Tab
+			<Copy {...iconProps} class="text-foreground" />
+			Duplicate
 		</ContextMenu.Item>
 		<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
 		<ContextMenu.Item class="gap-2" onclick={async () => await removeTab(tab.id!)}>
-			<X size="16" />
-			Close Tab
+			<Trash2 {...iconProps} class="text-foreground" />
+			Close
 		</ContextMenu.Item>
 	</ContextMenu.Content>
 </ContextMenu.Root>

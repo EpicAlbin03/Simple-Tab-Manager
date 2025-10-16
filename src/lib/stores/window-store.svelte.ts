@@ -18,9 +18,26 @@ export class WindowStore {
 		this.isLoading = false;
 	}
 
-	private debouncedRefresh = useDebounce(() => this.loadWindows(), 100);
+	private debouncedLoadWindows = useDebounce(() => this.loadWindows(), 100);
+
+	debouncedRefresh(callback?: () => void) {
+		this.debouncedLoadWindows();
+		if (callback) {
+			callback();
+		}
+	}
+
+	getPressedTabs() {
+		return this.windows
+			.flatMap((window) => window.tabs)
+			.filter((tab: ChromeTab) => tab.pressed) as ChromeTab[];
+	}
 
 	addListeners() {
+		chrome.windows.onCreated.addListener(() => this.debouncedRefresh());
+		chrome.windows.onRemoved.addListener(() => this.debouncedRefresh());
+		chrome.windows.onFocusChanged.addListener(() => this.debouncedRefresh());
+		chrome.windows.onBoundsChanged.addListener(() => this.debouncedRefresh());
 		chrome.tabs.onCreated.addListener(() => this.debouncedRefresh());
 		chrome.tabs.onRemoved.addListener(() => this.debouncedRefresh());
 		chrome.tabs.onUpdated.addListener(() => this.debouncedRefresh());
@@ -28,6 +45,10 @@ export class WindowStore {
 	}
 
 	removeListeners() {
+		chrome.windows.onCreated.removeListener(() => this.debouncedRefresh());
+		chrome.windows.onRemoved.removeListener(() => this.debouncedRefresh());
+		chrome.windows.onFocusChanged.removeListener(() => this.debouncedRefresh());
+		chrome.windows.onBoundsChanged.removeListener(() => this.debouncedRefresh());
 		chrome.tabs.onCreated.removeListener(() => this.debouncedRefresh());
 		chrome.tabs.onRemoved.removeListener(() => this.debouncedRefresh());
 		chrome.tabs.onUpdated.removeListener(() => this.debouncedRefresh());

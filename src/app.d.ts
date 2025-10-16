@@ -14,7 +14,7 @@ declare global {
 	};
 
 	type ChromeWindow = Omit<chrome.windows.Window, 'tabs'> & {
-		tabs?: Tab[];
+		tabs: Tab[];
 		name?: string;
 		color?: string;
 	};
