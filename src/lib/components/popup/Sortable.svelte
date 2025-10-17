@@ -5,6 +5,7 @@
 	import { moveTabs } from '$lib/chrome/tabs';
 	import { onMount } from 'svelte';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
+	import { createLastClickedTabIndexStore } from '$lib/stores/last-selected-tab-store.svelte';
 	const { MultiDrag } = Sortablejs;
 
 	type Props = {
@@ -18,6 +19,8 @@
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 	let listView = $derived(options.tabView === 'list');
+
+	const lastClickedTabIndexStore = createLastClickedTabIndexStore();
 
 	onMount(() => {
 		try {
@@ -67,7 +70,7 @@
 			{#each tabs as tab, i}
 				{#if tab.id}
 					<li class="tab" id={tab.id.toString()}>
-						<Tab {tab} {i} {sortableWindow} {listView} />
+						<Tab {tab} {i} {sortableWindow} {listView} {lastClickedTabIndexStore} />
 					</li>
 				{/if}
 			{/each}

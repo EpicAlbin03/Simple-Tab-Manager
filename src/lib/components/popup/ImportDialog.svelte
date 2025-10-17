@@ -82,19 +82,21 @@
 </script>
 
 <Dialog.Root bind:open={importDialogOpen}>
-	<Dialog.Trigger class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }))}>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<Button {...props} variant="ghost" size="icon">
-						<Upload {...iconProps} />
-					</Button>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p class="font-normal">Import</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+	<Dialog.Trigger>
+		{#snippet child({ props })}
+			<Tooltip.Root>
+				<Tooltip.Trigger {...props}>
+					{#snippet child({ props })}
+						<Button {...props} variant="ghost" size="icon">
+							<Upload {...iconProps} />
+						</Button>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p class="font-normal">Import</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>

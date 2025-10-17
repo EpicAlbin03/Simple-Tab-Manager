@@ -33,6 +33,25 @@ export class WindowStore {
 			.filter((tab: ChromeTab) => tab.pressed) as ChromeTab[];
 	}
 
+	pressTab(tabId: number, windowId: number) {
+		const window = this.windows.find((window) => window.id === windowId);
+		if (window) {
+			const tab = window.tabs!.find((tab) => tab.id === tabId) as ChromeTab | undefined;
+			if (tab) {
+				tab.pressed = true;
+			}
+		}
+	}
+
+	clearPressedTabs(windowId: number) {
+		const window = this.windows.find((window) => window.id === windowId);
+		if (window && window.tabs) {
+			window.tabs.forEach((tab) => {
+				tab.pressed = false;
+			});
+		}
+	}
+
 	addListeners() {
 		chrome.windows.onCreated.addListener(() => this.debouncedRefresh());
 		chrome.windows.onRemoved.addListener(() => this.debouncedRefresh());

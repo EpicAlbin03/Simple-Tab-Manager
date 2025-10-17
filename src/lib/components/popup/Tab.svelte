@@ -15,51 +15,66 @@
 		removeTab
 	} from '$lib/chrome/tabs';
 	import { iconProps } from '$lib/utils';
+	import Sortable from 'sortablejs';
+	import type { LastClickedTabIndexStore } from '$lib/stores/last-selected-tab-store.svelte';
+	import { WindowStoreContext, type WindowStore } from '$lib/stores/window-store.svelte';
 
 	type Props = {
 		tab: ChromeTab;
 		i: number;
 		sortableWindow: HTMLElement;
 		listView: boolean;
+		lastClickedTabIndexStore: LastClickedTabIndexStore;
 	};
 
-	let { tab, i, sortableWindow, listView }: Props = $props();
+	let { tab, i, sortableWindow, listView, lastClickedTabIndexStore }: Props = $props();
 
+	const windowStore: WindowStore = WindowStoreContext.get();
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 
+	function onMouseDown(event: MouseEvent) {
+		// Avoid focus when pressing shift
+		event.preventDefault();
+	}
+
 	async function onTabClick(event: MouseEvent, clickedTab: ChromeTab, clickedTabIndex: number) {
 		if (event.metaKey || event.ctrlKey) {
+			event.preventDefault();
 			await openTab(clickedTab.id!, clickedTab.windowId);
-			// clearSelectedTabs();
-		}
-		// else if (event.shiftKey && lastClickedTabIndexStore.lastClickedTabIndex !== undefined) {
-		// 	const sortableTabs = Array.from(sortableWindow.querySelectorAll('.tab')) as HTMLElement[];
+		} else if (event.shiftKey && lastClickedTabIndexStore.lastClickedTabIndex !== undefined) {
+			event.preventDefault();
+			const sortableTabs = Array.from(sortableWindow.querySelectorAll('.tab')) as HTMLElement[];
 
-		// 	const start = Math.min(lastClickedTabIndexStore.lastClickedTabIndex, clickedTabIndex);
-		// 	const end = Math.max(lastClickedTabIndexStore.lastClickedTabIndex, clickedTabIndex);
-		// 	clearSelectedTabs(clickedTab.windowId);
-		// 	for (let i = start; i <= end; i++) {
-		// 		Sortable.utils.select(sortableTabs[i]);
-		// 		windowsStore.pressTab(parseInt(sortableTabs[i].id), parseInt(sortableWindow.id));
-		// 	}
-		// } else {
-		// 	lastClickedTabIndexStore.lastClickedTabIndex = clickedTabIndex;
-		// }
+			sortableTabs.forEach((tab) => Sortable.utils.deselect(tab));
+			windowStore.clearPressedTabs(clickedTab.windowId);
+
+			const start = Math.min(lastClickedTabIndexStore.lastClickedTabIndex, clickedTabIndex);
+			const end = Math.max(lastClickedTabIndexStore.lastClickedTabIndex, clickedTabIndex);
+
+			for (let i = start; i <= end; i++) {
+				Sortable.utils.select(sortableTabs[i]);
+				windowStore.pressTab(parseInt(sortableTabs[i].id), parseInt(sortableWindow.id));
+			}
+		} else {
+			lastClickedTabIndexStore.lastClickedTabIndex = clickedTabIndex;
+		}
 	}
 </script>
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<div {...props} class={listView ? '' : 'h-8 w-8'}>
+		{#snippet child({ props })}
+			<Tooltip.Root>
+				<Tooltip.Trigger {...props}>
+					{#snippet child({ props })}
 						<Toggle
+							{...props}
 							size="sm"
 							aria-label={tab.title}
-							class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-full'}`}
+							class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-8 w-8'}`}
 							bind:pressed={tab.pressed}
+							onmousedown={onMouseDown}
 							onclick={(event) => onTabClick(event, tab, i)}
 						>
 							<img
@@ -83,13 +98,13 @@
 								</span>
 							{/if}
 						</Toggle>
-					</div>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Content side="top" class="max-w-[286px]">
-				<p>{options.showTabUrl ? extractURL(tab.url!) : tab.title}</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content side="top" class="max-w-[286px]">
+					<p>{options.showTabUrl ? extractURL(tab.url!) : tab.title}</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{/snippet}
 	</ContextMenu.Trigger>
 
 	<ContextMenu.Content>
