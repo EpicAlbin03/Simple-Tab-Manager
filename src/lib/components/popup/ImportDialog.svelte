@@ -8,6 +8,16 @@
 	});
 
 	type FormSchema = typeof formSchema;
+
+	const WindowInfoType = `type WindowInfo = {
+  name?: string;
+  color?: string;
+  tabs: {
+    url: string;
+    pinned?: boolean;
+    muted?: boolean;
+  }[];
+}[];`;
 </script>
 
 <script lang="ts">
@@ -28,18 +38,8 @@
 	import { zod4 } from 'sveltekit-superforms/adapters';
 	import { removeWindow } from '$lib/chrome/windows';
 	import { Checkbox } from '$lib/components/ui/checkbox/index.js';
-
-	const WindowInfoType = {
-		name: 'string | undefined',
-		color: 'string | undefined',
-		tabs: [
-			{
-				url: 'string',
-				pinned: 'boolean | undefined',
-				muted: 'boolean | undefined'
-			}
-		]
-	};
+	import { highlightCode } from '$lib/highlight-code';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
 
 	let importDialogOpen = $state(false);
 
@@ -89,15 +89,30 @@
 		});
 	}
 
+	function isValidUrl(urlString: string): boolean {
+		try {
+			const url = new URL(urlString);
+			return url.protocol === 'http:' || url.protocol === 'https:';
+		} catch {
+			return false;
+		}
+	}
+
 	function splitUrlsToArr(input: string): string[][] {
 		const lines = input.split('\n');
 
 		let result: string[][] = [];
 		let group: string[] = [];
+		let invalidUrls: string[] = [];
 
 		for (const line of lines) {
 			if (line.trim() !== '') {
-				group.push(line.trim());
+				const url = line.trim();
+				if (isValidUrl(url)) {
+					group.push(url);
+				} else {
+					invalidUrls.push(url);
+				}
 			} else if (group.length > 0) {
 				result.push(group);
 				group = [];
@@ -106,6 +121,12 @@
 
 		if (group.length > 0) {
 			result.push(group);
+		}
+
+		if (invalidUrls.length > 0) {
+			toast.warning(
+				`Skipped ${invalidUrls.length} invalid URL${invalidUrls.length > 1 ? 's' : ''}`
+			);
 		}
 
 		return result;
@@ -189,16 +210,7 @@
 			</Tooltip.Root>
 		{/snippet}
 	</Dialog.Trigger>
-	<Dialog.Content
-		class="sm:max-w-[425px]"
-		interactOutsideBehavior="ignore"
-		onInteractOutside={(e) => {
-			e.preventDefault();
-		}}
-		onFocusOutside={(e) => {
-			e.preventDefault();
-		}}
-	>
+	<Dialog.Content>
 		<Dialog.Header>
 			<Dialog.Title>Import</Dialog.Title>
 			<Dialog.Description>
@@ -213,29 +225,45 @@
 			use:enhance
 			class="grid gap-8 py-4"
 		>
-			<div class="grid w-full max-w-sm items-center gap-1">
-				<HoverCard.Root>
-					<HoverCard.Trigger>
-						{#snippet child({ props: hoverProps })}
-							<div {...hoverProps} class="flex w-fit items-center gap-1">
-								<Label for="json-file">JSON File</Label>
-								<CircleQuestionMark {...iconProps} />
-							</div>
-						{/snippet}
-					</HoverCard.Trigger>
-					<HoverCard.Content align="start" class="w-fit">
-						<pre>{JSON.stringify(WindowInfoType, null, 2)}</pre>
-					</HoverCard.Content>
-				</HoverCard.Root>
-				<Input
-					id="json-file"
-					name="jsonFile"
-					type="file"
-					accept=".json"
-					disabled={$formData.urls.trim().length > 0}
-					bind:files={$file}
-				/>
-			</div>
+			<Form.Field {form} name="jsonFile">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="grid w-full gap-1.5">
+							<HoverCard.Root>
+								<HoverCard.Trigger>
+									{#snippet child({ props: hoverProps })}
+										<div {...hoverProps} class="flex w-fit items-center gap-1">
+											<Form.Label>JSON File</Form.Label>
+											<CircleQuestionMark {...iconProps} />
+										</div>
+									{/snippet}
+								</HoverCard.Trigger>
+								<HoverCard.Content
+									align="start"
+									class="flex w-fit items-center justify-center px-4 py-0"
+								>
+									{#await highlightCode(WindowInfoType, 'typescript')}
+										<Spinner />
+									{:then highlightedContent}
+										{@html highlightedContent}
+									{/await}
+								</HoverCard.Content>
+							</HoverCard.Root>
+							<Input
+								id={props.id}
+								name={props.name}
+								aria-describedby={props['aria-describedby']}
+								type="file"
+								accept=".json"
+								disabled={$formData.urls.trim().length > 0}
+								bind:files={$file}
+								class="p-0 pr-3 text-muted-foreground italic file:me-3 file:h-full file:border-0 file:border-e file:border-solid file:border-input file:bg-transparent file:px-3 file:text-sm file:font-medium file:text-foreground file:not-italic"
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
 			<Form.Field {form} name="urls">
 				<Form.Control>

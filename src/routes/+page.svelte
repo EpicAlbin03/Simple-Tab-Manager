@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import BottomNav from '$lib/components/popup/BottomNav.svelte';
 	import TopNav from '$lib/components/popup/TopNav.svelte';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
 
 	const windowStore: WindowStore = WindowStoreContext.get();
 
@@ -22,7 +23,7 @@
 	<div class="scrollable h-full overflow-auto p-2">
 		<div class="flex flex-wrap gap-2">
 			{#if windowStore.isLoading}
-				<p>Loading...</p>
+				<Spinner />
 			{:else}
 				{#each windowStore.windows as window, i}
 					<Window {window} {i} />

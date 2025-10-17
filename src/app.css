@@ -128,4 +128,12 @@
 	::-webkit-scrollbar-thumb {
 		@apply rounded-sm !bg-muted-foreground/30;
 	}
+
+	[data-line] span {
+		color: var(--shiki-light);
+
+		@variant dark {
+			color: var(--shiki-dark) !important;
+		}
+	}
 }
