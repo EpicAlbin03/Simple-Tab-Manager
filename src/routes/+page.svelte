@@ -16,20 +16,20 @@
 	});
 </script>
 
-{#if windowStore.isLoading}
-	<p>Loading...</p>
-{:else}
-	<div class="flex h-full w-full flex-col justify-between bg-muted/40">
-		<TopNav />
+<div class="flex h-full w-full flex-col justify-between bg-muted/40">
+	<TopNav />
 
-		<div class="scrollable h-full overflow-auto p-2">
-			<div class="flex flex-wrap gap-2">
+	<div class="scrollable h-full overflow-auto p-2">
+		<div class="flex flex-wrap gap-2">
+			{#if windowStore.isLoading}
+				<p>Loading...</p>
+			{:else}
 				{#each windowStore.windows as window, i}
 					<Window {window} {i} />
 				{/each}
-			</div>
+			{/if}
 		</div>
-
-		<BottomNav />
 	</div>
-{/if}
+
+	<BottomNav />
+</div>
