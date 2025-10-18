@@ -119,16 +119,6 @@
 		@apply bg-background text-foreground;
 	}
 
-	.scrollable::-webkit-scrollbar {
-		@apply h-2 w-2;
-	}
-	::-webkit-scrollbar-track {
-		@apply !bg-muted;
-	}
-	::-webkit-scrollbar-thumb {
-		@apply rounded-sm !bg-muted-foreground/30;
-	}
-
 	[data-line] span {
 		color: var(--shiki-light);
 

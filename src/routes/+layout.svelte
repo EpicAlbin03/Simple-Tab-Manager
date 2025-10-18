@@ -8,8 +8,8 @@
 
 	let { children } = $props();
 
-	WindowStoreContext.set(new WindowStore());
-	OptionStoreContext.set(new OptionStore());
+	const windowStore = WindowStoreContext.set(new WindowStore());
+	const optionStore = OptionStoreContext.set(new OptionStore());
 </script>
 
 <ModeWatcher />

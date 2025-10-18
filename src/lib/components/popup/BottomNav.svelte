@@ -5,10 +5,10 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { createTab, removeTabs, toggleMuteTabs, togglePinTabs } from '$lib/chrome/tabs';
-	import { setOptions } from '$lib/chrome/storage';
 	import { WindowStoreContext, type WindowStore } from '$lib/stores/window-store.svelte';
 	import Searchbar from './SearchBar.svelte';
 	import { iconProps } from '$lib/utils';
+	import { shortcut } from '$lib/actions/shortcut.svelte';
 
 	const windowStore: WindowStore = WindowStoreContext.get();
 	const optionStore: OptionStore = OptionStoreContext.get();
@@ -16,6 +16,21 @@
 	const pressedTabs = $derived(windowStore.getPressedTabs());
 	const pressedTabIds = $derived(pressedTabs.map((tab) => tab.id!));
 </script>
+
+<svelte:window
+	use:shortcut={[
+		{ key: 'n', ctrl: true, callback: async () => await createEmptyWindow() },
+		{ key: 'b', ctrl: true, callback: async () => await createTab('chrome://bookmarks/') },
+		{ key: 'm', ctrl: true, shift: true, callback: async () => await toggleMuteTabs(pressedTabs) },
+		{ key: 'p', ctrl: true, shift: true, callback: async () => await togglePinTabs(pressedTabs) },
+		{
+			key: 'delete',
+			ctrl: true,
+			shift: true,
+			callback: async () => await removeTabs(pressedTabIds)
+		}
+	]}
+/>
 
 <div class="flex items-center justify-between border-t bg-background p-2">
 	<Searchbar />
@@ -119,8 +134,9 @@
 						variant="ghost"
 						size="icon"
 						onclick={async () => {
-							options.tabView = options.tabView === 'list' ? 'grid' : 'list';
-							await setOptions({ tabView: options.tabView });
+							await optionStore.updateOptions({
+								tabView: options.tabView === 'list' ? 'grid' : 'list'
+							});
 						}}
 					>
 						{#if options.tabView === 'list'}

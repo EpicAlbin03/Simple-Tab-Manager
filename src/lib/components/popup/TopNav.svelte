@@ -2,25 +2,18 @@
 	import { Button } from '$lib/components/ui/button';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { iconProps } from '$lib/utils';
-	import { setOptions } from '$lib/chrome/storage';
 	import { TabInfoSchema, type WindowInfo } from '$lib/schemas';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { Download, Moon, Settings, Sun } from '@lucide/svelte';
 	import { toggleMode } from 'mode-watcher';
 	import ImportDialog from './ImportDialog.svelte';
 	import { WindowStore, WindowStoreContext } from '$lib/stores/window-store.svelte';
+	import { shortcut } from '$lib/actions/shortcut.svelte';
 
 	const windowStore: WindowStore = WindowStoreContext.get();
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 	const windows = $derived(windowStore.windows);
-
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'S' && (e.metaKey || e.ctrlKey) && e.shiftKey) {
-			e.preventDefault();
-			exportWindows();
-		}
-	}
 
 	export function extractWindowInfo(windows: ChromeWindow[]) {
 		const windowsInfo: WindowInfo[] = [];
@@ -65,7 +58,7 @@
 	}
 </script>
 
-<svelte:document onkeydown={handleKeydown} />
+<svelte:window use:shortcut={{ key: 's', ctrl: true, shift: true, callback: exportWindows }} />
 
 <div class="flex items-center justify-between border-b bg-background p-2">
 	<div class="flex gap-1">
@@ -108,8 +101,9 @@
 						size="icon"
 						onclick={async () => {
 							toggleMode();
-							options.theme = options.theme === 'light' ? 'dark' : 'light';
-							await setOptions({ theme: options.theme });
+							await optionStore.updateOptions({
+								theme: options.theme === 'light' ? 'dark' : 'light'
+							});
 						}}
 					>
 						<Sun
