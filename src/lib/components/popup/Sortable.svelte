@@ -65,6 +65,9 @@
 		bind:this={sortableWindow}
 		id={window.id.toString()}
 		class={`scrollable ${listView ? '' : 'flex flex-wrap'}`}
+		style={options.windowMaxHeight > 0
+			? `max-height: ${options.windowMaxHeight}px; overflow-y: auto;`
+			: undefined}
 	>
 		{#if tabs}
 			{#each tabs as tab, i}

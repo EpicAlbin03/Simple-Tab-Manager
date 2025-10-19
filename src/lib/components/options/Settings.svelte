@@ -2,7 +2,6 @@
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
 	import * as Field from '$lib/components/ui/field/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { toast } from 'svelte-sonner';
@@ -10,11 +9,11 @@
 	import { RotateCcw } from '@lucide/svelte';
 	import { iconProps } from '$lib/utils';
 	import NumberInput from '$lib/components/ui/NumberInput.svelte';
-	import { defaultOptions } from '$lib/chrome/storage';
 
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 
+	let windowMaxHeight = $derived(options.windowMaxHeight);
 	let showTabUrl = $derived(options.showTabUrl);
 	let sortByUrl = $derived(options.sortByUrl);
 	let sortDescending = $derived(options.sortDescending);
@@ -28,6 +27,15 @@
 	<Card.Content class="space-y-2 px-0">
 		<div class="flex flex-col gap-4">
 			<Field.Legend class="mb-0">Window</Field.Legend>
+			<Field.Field>
+				<div class="flex justify-between">
+					<Field.Label class="text-sm text-muted-foreground">
+						Max window height before showing scrollbar (px)
+					</Field.Label>
+					<NumberInput bind:value={windowMaxHeight} class="w-56" />
+				</div>
+				<Field.Description class="ml-auto">0 = infinite height / no scrollbar</Field.Description>
+			</Field.Field>
 			<Field.Field orientation="horizontal" class="justify-between">
 				<Field.Label class="text-sm text-muted-foreground">
 					Show tab url instead of title
@@ -107,6 +115,7 @@
 		<Button
 			onclick={async () => {
 				await optionStore.updateOptions({
+					windowMaxHeight,
 					showTabUrl,
 					sortByUrl,
 					sortDescending,

@@ -5,6 +5,7 @@ export type Options = {
 	theme: 'light' | 'dark';
 	tabView: 'grid' | 'list';
 	searchView: 'hide' | 'show';
+	windowMaxHeight: number;
 	showTabUrl: boolean;
 	sortByUrl: boolean;
 	sortDescending: boolean;
@@ -16,6 +17,7 @@ export const defaultOptions: Options = {
 	theme: mode.current ?? 'light',
 	tabView: 'list',
 	searchView: 'show',
+	windowMaxHeight: 0,
 	showTabUrl: false,
 	sortByUrl: false,
 	sortDescending: false,

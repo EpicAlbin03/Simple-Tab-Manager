@@ -7,7 +7,9 @@
 	type Props = {
 		minValue?: number;
 		maxValue?: number;
-		timerDuration?: number;
+		initialDelay?: number;
+		minDelay?: number;
+		accelerationRate?: number;
 	} & WithElementRef<Omit<HTMLInputAttributes, 'type'>>;
 
 	let {
@@ -17,11 +19,15 @@
 		'data-slot': dataSlot = 'input',
 		minValue = 0,
 		maxValue = 9999,
-		timerDuration = 100,
+		initialDelay = 120,
+		minDelay = 20,
+		accelerationRate = 0.8,
 		...restProps
 	}: Props = $props();
 
 	let timer: ReturnType<typeof setInterval> | null = null;
+	let currentDelay = initialDelay;
+	let holdCount = 0;
 
 	function updateCount(val: number) {
 		if (val >= minValue && val <= maxValue) {
@@ -29,18 +35,34 @@
 		}
 	}
 
+	function accelerate(action: () => void) {
+		action();
+		holdCount++;
+
+		currentDelay = Math.max(minDelay, initialDelay * Math.pow(accelerationRate, holdCount / 5));
+
+		if (timer) {
+			clearInterval(timer);
+		}
+		timer = setInterval(() => accelerate(action), currentDelay);
+	}
+
 	function startIncrement() {
+		currentDelay = initialDelay;
+		holdCount = 0;
 		updateCount(Number(value) + 1);
 		timer = setInterval(() => {
-			updateCount(Number(value) + 1);
-		}, timerDuration);
+			accelerate(() => updateCount(Number(value) + 1));
+		}, currentDelay);
 	}
 
 	function startDecrement() {
+		currentDelay = initialDelay;
+		holdCount = 0;
 		updateCount(Number(value) - 1);
 		timer = setInterval(() => {
-			updateCount(Number(value) - 1);
-		}, timerDuration);
+			accelerate(() => updateCount(Number(value) - 1));
+		}, currentDelay);
 	}
 
 	function stopCounting() {
@@ -48,6 +70,8 @@
 			clearInterval(timer);
 			timer = null;
 		}
+		currentDelay = initialDelay;
+		holdCount = 0;
 	}
 
 	onDestroy(() => {
