@@ -33,11 +33,6 @@
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 
-	function onMouseDown(event: MouseEvent) {
-		// Avoid focus when pressing shift
-		event.preventDefault();
-	}
-
 	async function onTabClick(event: MouseEvent, clickedTab: ChromeTab, clickedTabIndex: number) {
 		if (event.metaKey || event.ctrlKey) {
 			event.preventDefault();
@@ -74,7 +69,6 @@
 							aria-label={tab.title}
 							class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-8 w-8'}`}
 							bind:pressed={tab.pressed}
-							onmousedown={onMouseDown}
 							onclick={(event) => onTabClick(event, tab, i)}
 						>
 							<img
