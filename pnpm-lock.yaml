@@ -20,6 +20,9 @@ importers:
       '@lucide/svelte':
         specifier: ^0.544.0
         version: 0.544.0(svelte@5.41.0)
+      '@playwright/test':
+        specifier: ^1.55.1
+        version: 1.56.1
       '@shikijs/langs':
         specifier: ^3.13.0
         version: 3.13.0
@@ -594,6 +597,11 @@ packages:
 
   '@oxc-project/types@0.72.3':
     resolution: {integrity: sha512-CfAC4wrmMkUoISpQkFAIfMVvlPfQV3xg7ZlcqPXPOIMQhdKIId44G8W0mCPgtpWdFFAyJ+SFtiM+9vbyCkoVng==}
+
+  '@playwright/test@1.56.1':
+    resolution: {integrity: sha512-vSMYtL/zOcFpvJCW71Q/OEGQb7KYBPAdKh35WNSkaZA75JlAO8ED8UN6GUNTm3drWomcbcqRPFqQbLae8yBTdg==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
@@ -1508,6 +1516,11 @@ packages:
     resolution: {integrity: sha512-XUBA9XClHbnJWSfBzjkm6RvPsyg3sryZt06BEQoXcF7EK/xpGaQYJgQKDJSUH5SGZ76Y7pFx1QBnXz09rU5Fbw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -1986,6 +1999,16 @@ packages:
   picomatch@4.0.3:
     resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
+
+  playwright-core@1.56.1:
+    resolution: {integrity: sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.56.1:
+    resolution: {integrity: sha512-aFi5B0WovBHTEvpM3DzXTUaeN6eN0qWnTkKx4NQaH4Wvcmc153PdaY2UBdSYKaGYw+UyWXSVyxDUg5DoPEttjw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   postcss-load-config@3.1.4:
     resolution: {integrity: sha512-6DiM4E7v4coTE4uzA8U//WhtPwyhiim3eyjEMFCnUpzbrkK9wJHgKDT2mR+HbtSrd/NubVaYTOpSpjUl8NQeRg==}
@@ -3020,6 +3043,10 @@ snapshots:
 
   '@oxc-project/types@0.72.3': {}
 
+  '@playwright/test@1.56.1':
+    dependencies:
+      playwright: 1.56.1
+
   '@polka/url@1.0.0-next.29': {}
 
   '@poppinss/macroable@1.1.0':
@@ -4021,6 +4048,9 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
@@ -4526,6 +4556,14 @@ snapshots:
   picomatch@2.3.1: {}
 
   picomatch@4.0.3: {}
+
+  playwright-core@1.56.1: {}
+
+  playwright@1.56.1:
+    dependencies:
+      playwright-core: 1.56.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   postcss-load-config@3.1.4(postcss@8.5.6):
     dependencies:
