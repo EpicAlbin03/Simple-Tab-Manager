@@ -1,8 +1,7 @@
 import { test, expect } from './fixtures';
-import { dummyWindows } from '$lib/dummydata';
 
-test('first tab is visible in popup', async ({ page, extensionId }) => {
+test('first tab is visible in popup', async ({ page, extensionId, windows }) => {
 	await page.goto(`chrome-extension://${extensionId}/index.html`);
-	const firstTabTitle = dummyWindows[0].tabs[0].title;
-	await expect(page.getByRole('button', { name: firstTabTitle })).toBeVisible();
+	const tab = windows[0].tabs[0];
+	await expect(page.getByTestId(tab.id)).toBeVisible();
 });

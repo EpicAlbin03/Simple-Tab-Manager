@@ -64,6 +64,7 @@
 	<ul
 		bind:this={sortableWindow}
 		id={window.id.toString()}
+		data-testid={window.id.toString()}
 		class={`scrollable ${listView ? '' : 'flex flex-wrap'}`}
 		style={options.windowMaxHeight > 0
 			? `max-height: ${options.windowMaxHeight}px; overflow-y: auto;`
@@ -72,7 +73,7 @@
 		{#if tabs}
 			{#each tabs as tab, i}
 				{#if tab.id}
-					<li class="tab" id={tab.id.toString()}>
+					<li class="tab" id={tab.id.toString()} data-testid={tab.id.toString()}>
 						<Tab {tab} {i} {sortableWindow} {listView} {lastClickedTabIndexStore} />
 					</li>
 				{/if}

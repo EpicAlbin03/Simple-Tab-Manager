@@ -1,4 +1,4 @@
-import { getAllWindows } from '$lib/chrome/windows';
+import { loadWindows } from '$lib/chrome/windows';
 import { Context, useDebounce } from 'runed';
 
 export class WindowStore {
@@ -11,7 +11,7 @@ export class WindowStore {
 
 	async loadWindows() {
 		this.isLoading = true;
-		const windows = await getAllWindows();
+		const windows = await loadWindows();
 		if (windows) {
 			this.windows = windows;
 		}

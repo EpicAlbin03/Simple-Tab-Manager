@@ -6,9 +6,9 @@ type StoredWindow = {
 	color: string;
 };
 
-export async function getAllWindows() {
+export async function loadWindows() {
 	if (isChromeExtension()) {
-		const windows = (await chrome.windows.getAll({ populate: true })) as ChromeWindow[];
+		const windows = (await getAllWindows()) as ChromeWindow[];
 		const lastFocusedWindow = await getLastFocusedWindow();
 		for (const [i, window] of windows.entries()) {
 			if (window.id === lastFocusedWindow.id) {
@@ -23,6 +23,10 @@ export async function getAllWindows() {
 		}
 		return windows;
 	}
+}
+
+export async function getAllWindows() {
+	return await chrome.windows.getAll({ populate: true });
 }
 
 export async function getLastFocusedWindow() {

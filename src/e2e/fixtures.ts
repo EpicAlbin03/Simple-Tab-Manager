@@ -7,6 +7,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function waitForServiceWorker(context: BrowserContext) {
+	/*
+    // for manifest v2:
+    let [background] = context.backgroundPages()
+    if (!background)
+      background = await context.waitForEvent('backgroundpage')
+    */
+
+	// for manifest v3:
 	let [serviceWorker] = context.serviceWorkers();
 	if (!serviceWorker) {
 		serviceWorker = await context.waitForEvent('serviceworker');
@@ -15,23 +23,28 @@ async function waitForServiceWorker(context: BrowserContext) {
 }
 
 async function openDummyWindows(serviceWorker: Worker) {
-	for (const dummyWindow of dummyWindows) {
+	const promises = dummyWindows.slice(0, 2).map(async (dummyWindow) => {
 		const urls = dummyWindow.tabs.map((tab) => tab.url).filter((url) => url);
 
 		if (urls.length > 0) {
-			await serviceWorker.evaluate(async (tabUrls) => {
-				await chrome.windows.create({
+			return await serviceWorker.evaluate(async (tabUrls) => {
+				return (await self.chrome.windows.create({
 					url: tabUrls,
 					focused: false
-				});
+				})) as ChromeWindow;
 			}, urls);
 		}
-	}
+		return null;
+	});
+
+	const results = await Promise.all(promises);
+	return results.filter((window): window is ChromeWindow => window !== null);
 }
 
 export const test = base.extend<{
 	context: BrowserContext;
 	extensionId: string;
+	windows: ChromeWindow[];
 }>({
 	// eslint-disable-next-line no-empty-pattern
 	context: async ({}, use) => {
@@ -44,9 +57,6 @@ export const test = base.extend<{
 			]
 		});
 
-		const serviceWorker = await waitForServiceWorker(context);
-		await openDummyWindows(serviceWorker);
-
 		await use(context);
 		await context.close();
 	},
@@ -54,6 +64,13 @@ export const test = base.extend<{
 		const serviceWorker = await waitForServiceWorker(context);
 		const extensionId = serviceWorker.url().split('/')[2];
 		await use(extensionId);
+	},
+	windows: async ({ context, page, extensionId }, use) => {
+		const serviceWorker = await waitForServiceWorker(context);
+		const windows = await openDummyWindows(serviceWorker);
+		await page.goto(`chrome-extension://${extensionId}/index.html`);
+		await page.waitForTimeout(10000); // Wait for tabs to load
+		await use(windows);
 	}
 });
 
