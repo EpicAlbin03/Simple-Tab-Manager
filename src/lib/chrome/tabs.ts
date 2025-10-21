@@ -154,3 +154,16 @@ export async function quickSort(
 
 	await Promise.all(tabsToPin);
 }
+
+export function getSelectedTabsEl(windowId: number | undefined = undefined) {
+	if (windowId) {
+		const sortableWindow = document.getElementById(windowId.toString());
+		if (sortableWindow) {
+			return Array.from(sortableWindow.querySelectorAll('.sortable-selected')) as HTMLLIElement[];
+		}
+	} else {
+		return Array.from(document.querySelectorAll('.sortable-selected')) as HTMLLIElement[];
+	}
+
+	return [];
+}

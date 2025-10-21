@@ -1,7 +1,7 @@
 import { test as base, chromium, type BrowserContext, type Worker } from '@playwright/test';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { dummyWindows } from '$lib/dummydata';
+import { dummyWindows } from './data';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,18 +23,13 @@ async function waitForServiceWorker(context: BrowserContext) {
 }
 
 async function openDummyWindows(serviceWorker: Worker) {
-	const promises = dummyWindows.slice(0, 2).map(async (dummyWindow) => {
-		const urls = dummyWindow.tabs.map((tab) => tab.url).filter((url) => url);
-
-		if (urls.length > 0) {
-			return await serviceWorker.evaluate(async (tabUrls) => {
-				return (await self.chrome.windows.create({
-					url: tabUrls,
-					focused: false
-				})) as ChromeWindow;
-			}, urls);
-		}
-		return null;
+	const promises = dummyWindows.map(async (urls) => {
+		return await serviceWorker.evaluate(async (tabUrls) => {
+			return (await chrome.windows.create({
+				url: tabUrls,
+				focused: false
+			})) as ChromeWindow;
+		}, urls);
 	});
 
 	const results = await Promise.all(promises);
@@ -69,7 +64,7 @@ export const test = base.extend<{
 		const serviceWorker = await waitForServiceWorker(context);
 		const windows = await openDummyWindows(serviceWorker);
 		await page.goto(`chrome-extension://${extensionId}/index.html`);
-		await page.waitForTimeout(10000); // Wait for tabs to load
+		await page.waitForTimeout(5000); // Wait for the tabs to load
 		await use(windows);
 	}
 });

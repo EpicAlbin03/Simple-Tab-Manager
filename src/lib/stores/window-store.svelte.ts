@@ -1,5 +1,7 @@
+import { getSelectedTabsEl } from '$lib/chrome/tabs';
 import { loadWindows } from '$lib/chrome/windows';
 import { Context, useDebounce } from 'runed';
+import Sortable from 'sortablejs';
 
 export class WindowStore {
 	windows = $state<ChromeWindow[]>([]);
@@ -43,13 +45,26 @@ export class WindowStore {
 		}
 	}
 
-	clearPressedTabs(windowId: number) {
-		const window = this.windows.find((window) => window.id === windowId);
-		if (window && window.tabs) {
-			window.tabs.forEach((tab) => {
-				tab.pressed = false;
+	clearPressedTabs(windowId: number | undefined = undefined) {
+		if (windowId) {
+			const window = this.windows.find((window) => window.id === windowId);
+			if (window && window.tabs) {
+				window.tabs.forEach((tab) => {
+					tab.pressed = false;
+				});
+			}
+		} else {
+			this.windows.forEach((window) => {
+				window.tabs.forEach((tab) => {
+					tab.pressed = false;
+				});
 			});
 		}
+
+		const selectedTabs = getSelectedTabsEl(windowId);
+		selectedTabs.forEach((tab) => {
+			Sortable.utils.deselect(tab);
+		});
 	}
 
 	addListeners() {

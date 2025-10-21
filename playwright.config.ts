@@ -1,10 +1,11 @@
 import { defineConfig } from '@playwright/test';
+import 'dotenv/config';
 
 export default defineConfig({
 	testDir: 'src/e2e',
-	fullyParallel: true,
+	fullyParallel: process.env.CI ? false : true,
 	forbidOnly: !!process.env.CI,
-	retries: process.env.CI ? 2 : 0,
+	retries: 2,
 	workers: process.env.CI ? 1 : undefined,
 	reporter: 'html',
 	use: {

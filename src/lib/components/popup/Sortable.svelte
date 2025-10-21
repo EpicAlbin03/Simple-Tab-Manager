@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { createLastClickedTabIndexStore } from '$lib/stores/last-selected-tab-store.svelte';
+	import { WindowStoreContext, type WindowStore } from '$lib/stores/window-store.svelte';
 	const { MultiDrag } = Sortablejs;
 
 	type Props = {
@@ -16,6 +17,7 @@
 	let tabs = $derived(window.tabs);
 	let sortableWindow = $state<HTMLElement>(null!);
 
+	const windowStore: WindowStore = WindowStoreContext.get();
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 	let listView = $derived(options.tabView === 'list');
@@ -54,7 +56,7 @@
 
 				await moveTabs(items, windowId, newIndicies, oldIndicies);
 
-				// clearSelectedTabs();
+				windowStore.clearPressedTabs();
 			}
 		});
 	});
