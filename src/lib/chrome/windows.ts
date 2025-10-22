@@ -9,11 +9,7 @@ type StoredWindow = {
 export async function loadWindows() {
 	if (isChromeExtension()) {
 		const windows = (await getAllWindows()) as ChromeWindow[];
-		const lastFocusedWindow = await getLastFocusedWindow();
 		for (const [i, window] of windows.entries()) {
-			if (window.id === lastFocusedWindow.id) {
-				window.focused = true;
-			}
 			const storedWindow = (await getSessionStorageItem(`window-${window.id}`)) as StoredWindow;
 			window.name = storedWindow?.name ?? `Window ${i + 1}`;
 			window.color = storedWindow?.color ?? 'default';
