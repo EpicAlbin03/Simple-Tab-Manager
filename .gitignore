@@ -3,6 +3,7 @@ test-results
 node_modules
 
 # Output
+.vscode
 .output
 .vercel
 .netlify

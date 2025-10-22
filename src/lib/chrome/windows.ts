@@ -37,6 +37,10 @@ export async function createEmptyWindow() {
 	return await chrome.windows.create({ focused: true });
 }
 
+export async function createWindow(url: string | string[]) {
+	return await chrome.windows.create({ url });
+}
+
 export async function removeWindow(windowId: number) {
 	return await chrome.windows.remove(windowId);
 }

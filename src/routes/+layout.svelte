@@ -10,10 +10,11 @@
 
 	const windowStore = WindowStoreContext.set(new WindowStore());
 	const optionStore = OptionStoreContext.set(new OptionStore());
+	const options = $derived(optionStore.options);
 </script>
 
 <ModeWatcher />
 <Toaster duration={2000} />
-<Tooltip.Provider>
+<Tooltip.Provider disabled={options.disableTooltips}>
 	{@render children?.()}
 </Tooltip.Provider>

@@ -34,9 +34,7 @@
 				<Card.Title class="max-w-36 truncate text-base">{window.name}</Card.Title>
 
 				<div class="flex gap-0">
-					{#key window.name || window.color}
-						<EditWindow {window} {i} />
-					{/key}
+					<EditWindow {window} {i} />
 
 					<Tooltip.Root>
 						<Tooltip.Trigger>
@@ -139,9 +137,7 @@
 
 	<Card.Content class={`!pt-0 ${!minimized ? 'p-4' : 'p-0'}`}>
 		{#if !minimized}
-			{#key window}
-				<Sortable {window} />
-			{/key}
+			<Sortable {window} />
 		{/if}
 	</Card.Content>
 </Card.Root>

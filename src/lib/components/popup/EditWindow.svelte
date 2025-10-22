@@ -54,7 +54,7 @@
 			<div class="grid w-full max-w-sm items-center gap-4">
 				<Label for="color">Border color</Label>
 				<RadioGroup.Root bind:value={color}>
-					<div class="scrollable flex h-48 w-full flex-col gap-2 overflow-y-scroll">
+					<div class="flex h-48 w-full flex-col gap-2 overflow-y-scroll">
 						<div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="default" id="default" class="h-6 w-6" />

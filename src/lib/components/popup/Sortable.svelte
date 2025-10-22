@@ -67,7 +67,7 @@
 		bind:this={sortableWindow}
 		id={window.id.toString()}
 		data-testid={window.id.toString()}
-		class={`scrollable ${listView ? '' : 'flex flex-wrap'}`}
+		class={`overflow-x-hidden ${listView ? '' : 'flex flex-wrap'} ${options.windowMaxHeight > 0 ? '' : 'overflow-y-hidden'}`}
 		style={options.windowMaxHeight > 0
 			? `max-height: ${options.windowMaxHeight}px; overflow-y: auto;`
 			: undefined}

@@ -15,6 +15,10 @@
 </p>
 <br/>
 
+## Extension
+
+[Chrome Web Store](https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc)
+
 ## Functionality
 
 ### Windows
@@ -44,3 +48,10 @@
 
 Make sure to replace `node_modules/sveltekit-adapter-chrome-extension/index.js`
 with my [updated version](https://github.com/EpicAlbin03/sveltekit-adapter-chrome-extension/blob/main/index.js) to correctly remove inline scripts when building.
+
+### TODO
+
+- Firefox support (MV2)
+- Tab groups
+- Custom keybinds
+- Playwright testing

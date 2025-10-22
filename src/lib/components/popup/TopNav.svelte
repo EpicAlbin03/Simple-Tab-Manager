@@ -4,11 +4,15 @@
 	import { iconProps } from '$lib/utils';
 	import { TabInfoSchema, type WindowInfo } from '$lib/schemas';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
-	import { Download, Moon, Settings, Sun } from '@lucide/svelte';
+	import { Download, Moon, RotateCw, Settings, Sun, Upload } from '@lucide/svelte';
 	import { toggleMode } from 'mode-watcher';
 	import ImportDialog from './ImportDialog.svelte';
 	import { WindowStore, WindowStoreContext } from '$lib/stores/window-store.svelte';
 	import { shortcut } from '$lib/actions/shortcut.svelte';
+	import { dummyWindows } from '$lib/dummydata';
+	import { createWindow, removeWindow } from '$lib/chrome/windows';
+	import { PUBLIC_DEV } from '$env/static/public';
+	import { createTab } from '$lib/chrome/tabs';
 
 	const windowStore: WindowStore = WindowStoreContext.get();
 	const optionStore: OptionStore = OptionStoreContext.get();
@@ -78,7 +82,28 @@
 		</Tooltip.Root>
 	</div>
 
-	<div class="ml-auto flex gap-1">
+	{#if PUBLIC_DEV}
+		<div class="flex gap-1">
+			<Button variant="ghost" size="icon" onclick={async () => await windowStore.loadWindows()}>
+				<RotateCw {...iconProps} />
+			</Button>
+			<Button
+				variant="ghost"
+				size="icon"
+				onclick={async () => {
+					const windows = dummyWindows.slice(0, 2);
+					windows.forEach(async (window) => {
+						await createWindow(window.tabs.map((tab) => tab.url));
+					});
+					await createTab('chrome://extensions');
+				}}
+			>
+				<Upload {...iconProps} />
+			</Button>
+		</div>
+	{/if}
+
+	<div class="flex gap-1">
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				{#snippet child({ props })}

@@ -2,7 +2,7 @@
 	import { Toggle } from '$lib/components/ui/toggle';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
-	import { VolumeX, Pin, Plus, RotateCw, Copy, Trash2 } from '@lucide/svelte';
+	import { VolumeX, Pin, Plus, RotateCw, Copy, Trash2, Chromium } from '@lucide/svelte';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { extractURL } from '$lib/chrome/utils';
 	import {
@@ -71,15 +71,25 @@
 							bind:pressed={tab.pressed}
 							onclick={(event) => onTabClick(event, tab, i)}
 						>
-							<img
-								src={tab.favIconUrl}
-								alt={tab.title}
-								height="12"
-								width="12"
-								class={`h-3 w-3 ${listView ? 'absolute' : ''}`}
-							/>
+							{#if tab.favIconUrl}
+								<img
+									src={tab.favIconUrl}
+									alt={tab.title}
+									height="12"
+									width="12"
+									class={`h-3 w-3 ${listView ? 'absolute' : ''}`}
+								/>
+							{:else}
+								<Chromium
+									{...iconProps}
+									size="12"
+									class={`!h-3 !w-3 ${listView ? 'absolute' : ''}`}
+								/>
+							{/if}
 							{#if listView}
-								<span class={`pl-5 text-start ${options.truncateTabTitle ? 'truncate' : ''}`}>
+								<span
+									class={`pl-5 text-start ${options.truncateTabTitle ? 'truncate' : 'text-wrap'}`}
+								>
 									{options.showTabUrl ? extractURL(tab.url!) : tab.title}
 								</span>
 								<span class="ml-auto flex gap-2 pl-1">

@@ -22,6 +22,18 @@ async function waitForServiceWorker(context: BrowserContext) {
 	return serviceWorker;
 }
 
+async function waitForChrome(serviceWorker: Worker) {
+	// up to 5 seconds
+	for (let i = 0; i < 50; i++) {
+		const ready = await serviceWorker.evaluate(() => {
+			return typeof chrome !== 'undefined' && !!chrome.windows;
+		});
+		if (ready) return;
+		await new Promise((r) => setTimeout(r, 100));
+	}
+	throw new Error('Chrome did not become ready in time');
+}
+
 async function openDummyWindows(serviceWorker: Worker) {
 	const promises = dummyWindows.map(async (urls) => {
 		return await serviceWorker.evaluate(async (tabUrls) => {
@@ -62,6 +74,7 @@ export const test = base.extend<{
 	},
 	windows: async ({ context, page, extensionId }, use) => {
 		const serviceWorker = await waitForServiceWorker(context);
+		await waitForChrome(serviceWorker);
 		const windows = await openDummyWindows(serviceWorker);
 		await page.goto(`chrome-extension://${extensionId}/index.html`);
 		await page.waitForTimeout(5000); // Wait for the tabs to load
