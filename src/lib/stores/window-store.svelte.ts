@@ -45,7 +45,7 @@ export class WindowStore {
 		}
 	}
 
-	clearPressedTabs(windowId: number | undefined = undefined) {
+	clearPressedTabs(windowId?: number) {
 		if (windowId) {
 			const window = this.windows.find((window) => window.id === windowId);
 			if (window && window.tabs) {

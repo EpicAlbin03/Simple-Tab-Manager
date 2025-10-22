@@ -142,11 +142,7 @@ export async function quickSort(
 		}
 	);
 
-	await Promise.all(
-		sortedTabs.map((tab, index) =>
-			chrome.tabs.move(tab.id!, { index }).then(() => console.log(tab.title))
-		)
-	);
+	await Promise.all(sortedTabs.map((tab, index) => chrome.tabs.move(tab.id!, { index })));
 
 	const tabsToPin = sortedTabs
 		.filter((tab) => pinnedTabSet.has(tab.id!))
@@ -155,7 +151,7 @@ export async function quickSort(
 	await Promise.all(tabsToPin);
 }
 
-export function getSelectedTabsEl(windowId: number | undefined = undefined) {
+export function getSelectedTabsEl(windowId?: number) {
 	if (windowId) {
 		const sortableWindow = document.getElementById(windowId.toString());
 		if (sortableWindow) {

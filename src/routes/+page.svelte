@@ -27,7 +27,7 @@
 				{#if windowStore.isLoading}
 					<Spinner />
 				{:else}
-					{#each windowStore.windows as window, i}
+					{#each windowStore.windows as window, i (window.id)}
 						<Window {window} {i} />
 					{/each}
 				{/if}

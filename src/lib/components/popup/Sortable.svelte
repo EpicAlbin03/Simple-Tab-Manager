@@ -3,10 +3,9 @@
 	import * as Sortablejs from 'sortablejs';
 	import Tab from './Tab.svelte';
 	import { moveTabs } from '$lib/chrome/tabs';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
 	import { createLastClickedTabIndexStore } from '$lib/stores/last-selected-tab-store.svelte';
-	import { WindowStoreContext, type WindowStore } from '$lib/stores/window-store.svelte';
 	const { MultiDrag } = Sortablejs;
 
 	type Props = {
@@ -16,8 +15,8 @@
 	let { window }: Props = $props();
 	let tabs = $derived(window.tabs);
 	let sortableWindow = $state<HTMLElement>(null!);
+	let sortableInstance = $state<Sortable>(null!);
 
-	const windowStore: WindowStore = WindowStoreContext.get();
 	const optionStore: OptionStore = OptionStoreContext.get();
 	const options = $derived(optionStore.options);
 	let listView = $derived(options.tabView === 'list');
@@ -29,7 +28,7 @@
 			Sortable.mount(new MultiDrag());
 		} catch (error) {}
 
-		const sortable = new Sortable(sortableWindow, {
+		sortableInstance = new Sortable(sortableWindow, {
 			group: 'shared',
 			animation: 150,
 			swapThreshold: 0.65,
@@ -55,10 +54,12 @@
 				}
 
 				await moveTabs(items, windowId, newIndicies, oldIndicies);
-
-				windowStore.clearPressedTabs();
 			}
 		});
+	});
+
+	onDestroy(() => {
+		sortableInstance?.destroy();
 	});
 </script>
 
@@ -73,7 +74,7 @@
 			: undefined}
 	>
 		{#if tabs}
-			{#each tabs as tab, i}
+			{#each tabs as tab, i (tab.id)}
 				{#if tab.id}
 					<li class="tab" id={tab.id.toString()} data-testid={tab.id.toString()}>
 						<Tab {tab} {i} {sortableWindow} {listView} {lastClickedTabIndexStore} />
