@@ -82,7 +82,7 @@
 		</Tooltip.Root>
 	</div>
 
-	{#if PUBLIC_DEV}
+	{#if PUBLIC_DEV === 'true'}
 		<div class="flex gap-1">
 			<Button variant="ghost" size="icon" onclick={async () => await windowStore.loadWindows()}>
 				<RotateCw {...iconProps} />

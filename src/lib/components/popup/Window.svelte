@@ -25,7 +25,7 @@
 </script>
 
 <Card.Root
-	class="h-fit w-full max-w-xs gap-0 py-0"
+	class="h-fit w-full max-w-xs gap-0 bg-background py-0"
 	style={window.color ? `border-color: hsl(${window.color})` : ''}
 >
 	<Card.Header class="flex flex-row items-center gap-2 space-y-0 p-4">
