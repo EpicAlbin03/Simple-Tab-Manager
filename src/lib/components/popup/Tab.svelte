@@ -1,22 +1,23 @@
 <script lang="ts">
-	import { clearSelectedTabs, createEmptyTab, duplicateTab, openTab } from '$lib/chrome/tabs';
-	import {
-		windowsStore,
-		type LastClickedTabIndexStore,
-		type OptionsStore
-	} from '$lib/stores.svelte';
-	import Sortable from 'sortablejs';
 	import { Toggle } from '$lib/components/ui/toggle';
-	import DrawingPin from 'svelte-radix/DrawingPin.svelte';
-	import SpeakerOff from 'svelte-radix/SpeakerOff.svelte';
-	import Plus from 'svelte-radix/Plus.svelte';
-	import Reload from 'svelte-radix/Reload.svelte';
-	import Copy from 'svelte-radix/Copy.svelte';
-	import Cross2 from 'svelte-radix/Cross2.svelte';
-	import { getContext } from 'svelte';
-	import { extractURL } from '$lib/chrome/utils';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import * as ContextMenu from '$lib/components/ui/context-menu/index.js';
+	import { VolumeX, Pin, Plus, RotateCw, Copy, Trash2, Chromium } from '@lucide/svelte';
+	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
+	import { extractURL } from '$lib/chrome/utils';
+	import {
+		createEmptyTab,
+		duplicateTab,
+		muteTab,
+		openTab,
+		pinTab,
+		reloadTab,
+		removeTab
+	} from '$lib/chrome/tabs';
+	import { iconProps } from '$lib/utils';
+	import Sortable from 'sortablejs';
+	import type { LastClickedTabIndexStore } from '$lib/stores/last-selected-tab-store.svelte';
+	import { WindowStoreContext, type WindowStore } from '$lib/stores/window-store.svelte';
 
 	type Props = {
 		tab: ChromeTab;
@@ -27,24 +28,28 @@
 	};
 
 	let { tab, i, sortableWindow, listView, lastClickedTabIndexStore }: Props = $props();
-	let pressed = $state(tab.pressed ?? false);
 
-	const optionsStore: OptionsStore = getContext('optionsStore');
-	const { showTabUrl, truncateTabTitle, tabView } = $derived(optionsStore.options);
+	const windowStore: WindowStore = WindowStoreContext.get();
+	const optionStore: OptionStore = OptionStoreContext.get();
+	const options = $derived(optionStore.options);
 
 	async function onTabClick(event: MouseEvent, clickedTab: ChromeTab, clickedTabIndex: number) {
 		if (event.metaKey || event.ctrlKey) {
+			event.preventDefault();
 			await openTab(clickedTab.id!, clickedTab.windowId);
-			clearSelectedTabs();
 		} else if (event.shiftKey && lastClickedTabIndexStore.lastClickedTabIndex !== undefined) {
+			event.preventDefault();
 			const sortableTabs = Array.from(sortableWindow.querySelectorAll('.tab')) as HTMLElement[];
+
+			sortableTabs.forEach((tab) => Sortable.utils.deselect(tab));
+			windowStore.clearPressedTabs(clickedTab.windowId);
 
 			const start = Math.min(lastClickedTabIndexStore.lastClickedTabIndex, clickedTabIndex);
 			const end = Math.max(lastClickedTabIndexStore.lastClickedTabIndex, clickedTabIndex);
-			clearSelectedTabs(clickedTab.windowId);
+
 			for (let i = start; i <= end; i++) {
 				Sortable.utils.select(sortableTabs[i]);
-				windowsStore.pressTab(parseInt(sortableTabs[i].id), parseInt(sortableWindow.id));
+				windowStore.pressTab(parseInt(sortableTabs[i].id), parseInt(sortableWindow.id));
 			}
 		} else {
 			lastClickedTabIndexStore.lastClickedTabIndex = clickedTabIndex;
@@ -54,45 +59,56 @@
 
 <ContextMenu.Root>
 	<ContextMenu.Trigger>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<div {...props} class={listView ? '' : 'h-8 w-8'}>
+		{#snippet child({ props })}
+			<Tooltip.Root>
+				<Tooltip.Trigger {...props}>
+					{#snippet child({ props })}
 						<Toggle
+							{...props}
 							size="sm"
 							aria-label={tab.title}
-							class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-full'}`}
-							bind:pressed
+							class={`w-full ${listView ? 'relative h-fit justify-start gap-2 py-1.5' : 'h-8 w-8'}`}
+							bind:pressed={tab.pressed}
 							onclick={(event) => onTabClick(event, tab, i)}
 						>
-							<img
-								src={tab.favIconUrl}
-								alt={tab.title}
-								height="12"
-								width="12"
-								class={`h-3 w-3 ${listView ? 'absolute' : ''}`}
-							/>
+							{#if tab.favIconUrl}
+								<img
+									src={tab.favIconUrl}
+									alt={tab.title}
+									height="12"
+									width="12"
+									class={`h-3 w-3 ${listView ? 'absolute' : ''}`}
+								/>
+							{:else}
+								<Chromium
+									{...iconProps}
+									size="12"
+									class={`!h-3 !w-3 ${listView ? 'absolute' : ''}`}
+								/>
+							{/if}
 							{#if listView}
-								<span class={`pl-5 text-start ${truncateTabTitle ? 'truncate' : ''}`}>
-									{showTabUrl ? extractURL(tab.url!) : tab.title}
+								<span
+									class={`pl-5 text-start ${options.truncateTabTitle ? 'truncate' : 'text-wrap'}`}
+								>
+									{options.showTabUrl ? extractURL(tab.url!) : tab.title}
 								</span>
 								<span class="ml-auto flex gap-2 pl-1">
 									{#if tab.mutedInfo?.muted}
-										<SpeakerOff size="16" />
+										<VolumeX {...iconProps} />
 									{/if}
 									{#if tab.pinned}
-										<DrawingPin size="16" />
+										<Pin {...iconProps} />
 									{/if}
 								</span>
 							{/if}
 						</Toggle>
-					</div>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Content side="top" class="max-w-[286px]">
-				<p>{showTabUrl ? extractURL(tab.url!) : tab.title}</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content side="top" class="max-w-[286px]">
+					<p>{options.showTabUrl ? extractURL(tab.url!) : tab.title}</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{/snippet}
 	</ContextMenu.Trigger>
 
 	<ContextMenu.Content>
@@ -100,39 +116,36 @@
 			class="gap-2"
 			onclick={async () => await createEmptyTab(tab.windowId, tab.index + 1)}
 		>
-			<Plus size="16" />
-			New Tab Below
+			<Plus {...iconProps} class="text-foreground" />
+			New Tab
 		</ContextMenu.Item>
 		<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
-		<ContextMenu.Item class="gap-2" onclick={async () => await chrome.tabs.reload(tab.id!)}>
-			<Reload size="16" />
-			Reload Tab
+		<ContextMenu.Item class="gap-2" onclick={async () => await reloadTab(tab.id!)}>
+			<RotateCw {...iconProps} class="text-foreground" />
+			Reload
 		</ContextMenu.Item>
 		<ContextMenu.Item
 			class="gap-2"
-			onclick={async () => await chrome.tabs.update(tab.id!, { muted: !tab.mutedInfo?.muted })}
+			onclick={async () => await muteTab(tab.id!, !tab.mutedInfo?.muted)}
 		>
-			<SpeakerOff size="16" />
-			{tab.mutedInfo?.muted ? 'Unmute' : 'Mute'} Tab
+			<VolumeX {...iconProps} class="text-foreground" />
+			{tab.mutedInfo?.muted ? 'Unmute' : 'Mute'}
 		</ContextMenu.Item>
-		<ContextMenu.Item
-			class="gap-2"
-			onclick={async () => await chrome.tabs.update(tab.id!, { pinned: !tab.pinned })}
-		>
-			<DrawingPin size="16" />
-			{tab.pinned ? 'Unpin' : 'Pin'} Tab
+		<ContextMenu.Item class="gap-2" onclick={async () => await pinTab(tab.id!, !tab.pinned)}>
+			<Pin {...iconProps} class="text-foreground" />
+			{tab.pinned ? 'Unpin' : 'Pin'}
 		</ContextMenu.Item>
 		<ContextMenu.Item
 			class="gap-2"
 			onclick={async () => await duplicateTab(tab.url!, tab.index + 1, tab.pinned)}
 		>
-			<Copy size="16" />
-			Duplicate Tab
+			<Copy {...iconProps} class="text-foreground" />
+			Duplicate
 		</ContextMenu.Item>
 		<ContextMenu.Separator class="-mx-1 my-1 block h-px bg-muted" />
-		<ContextMenu.Item class="gap-2" onclick={async () => await chrome.tabs.remove(tab.id!)}>
-			<Cross2 size="16" />
-			Close Tab
+		<ContextMenu.Item class="gap-2" onclick={async () => await removeTab(tab.id!)}>
+			<Trash2 {...iconProps} class="text-foreground" />
+			Close
 		</ContextMenu.Item>
 	</ContextMenu.Content>
 </ContextMenu.Root>

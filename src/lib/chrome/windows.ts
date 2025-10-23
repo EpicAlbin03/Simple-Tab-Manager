@@ -1,96 +1,28 @@
-import { dummyWindows } from '$lib/dummydata';
-import { windowsStore } from '$lib/stores.svelte';
-import { clearSelectedTabs } from './tabs';
+import { getSessionStorageItem } from './storage';
 import { isChromeExtension } from './utils';
 
-//*-----------------------------------------------------------------------*//
-//*------------------------------- Events --------------------------------*//
-//*-----------------------------------------------------------------------*//
-export function addWindowEventListeners() {
+type StoredWindow = {
+	name: string;
+	color: string;
+};
+
+export async function loadWindows() {
 	if (isChromeExtension()) {
-		chrome.windows.onCreated.addListener(async (window) => {
-			if (window.id) {
-				await createWindowCallback(window.id);
+		const windows = (await getAllWindows()) as ChromeWindow[];
+		for (const [i, window] of windows.entries()) {
+			const storedWindow = (await getSessionStorageItem(`window-${window.id}`)) as StoredWindow;
+			window.name = storedWindow?.name ?? `Window ${i + 1}`;
+			window.color = storedWindow?.color ?? 'default';
+			for (const tab of window.tabs) {
+				tab.pressed = false;
 			}
-		});
-
-		chrome.windows.onRemoved.addListener(async (windowId) => await removeWindowCallback(windowId));
-
-		chrome.windows.onFocusChanged.addListener(async (windowId) => {
-			if (windowId !== chrome.windows.WINDOW_ID_NONE) {
-				await updateWindowCallback(windowId);
-			}
-		});
-
-		chrome.windows.onBoundsChanged.addListener(async (window) => {
-			if (window.id) {
-				await updateWindowCallback(window.id);
-			}
-		});
-	}
-}
-
-export function removeWindowEventListeners() {
-	if (isChromeExtension()) {
-		chrome.windows.onCreated.removeListener(async (window) => {
-			if (window.id) {
-				await createWindowCallback(window.id);
-			}
-		});
-
-		chrome.windows.onRemoved.removeListener(
-			async (windowId) => await removeWindowCallback(windowId)
-		);
-
-		chrome.windows.onFocusChanged.removeListener(async (windowId) => {
-			if (windowId !== chrome.windows.WINDOW_ID_NONE) {
-				await updateWindowCallback(windowId);
-			}
-		});
-
-		chrome.windows.onBoundsChanged.removeListener(async (window) => {
-			if (window.id) {
-				await updateWindowCallback(window.id);
-			}
-		});
-	}
-}
-
-async function createWindowCallback(windowId: number) {
-	const populatedWindow = await getWindow(windowId, { populate: true });
-	windowsStore.addWindow(populatedWindow);
-	clearSelectedTabs();
-}
-
-async function removeWindowCallback(windowId: number) {
-	windowsStore.removeWindow(windowId);
-	clearSelectedTabs();
-}
-
-// ? Possibly keep selection after focused changed
-async function updateWindowCallback(windowId: number) {
-	const window = await getWindow(windowId, { populate: true });
-	windowsStore.updateWindow(window);
-	clearSelectedTabs();
-}
-
-//*-----------------------------------------------------------------------*//
-//*----------------------------- Functions -------------------------------*//
-//*-----------------------------------------------------------------------*//
-export async function getAllWindows() {
-	if (isChromeExtension()) {
-		const windows = await chrome.windows.getAll({ populate: true });
-		const lastFocusedWindow = await chrome.windows.getLastFocused();
-		const index = windows.findIndex((window) => window.id === lastFocusedWindow.id);
-		windows[index].focused = true;
+		}
 		return windows;
-	} else {
-		return windowsStore.windows.length > 0 ? windowsStore.windows : dummyWindows;
 	}
 }
 
-export async function getWindow(windowId: number, queryOptions: chrome.windows.QueryOptions = {}) {
-	return await chrome.windows.get(windowId, queryOptions);
+export async function getAllWindows() {
+	return await chrome.windows.getAll({ populate: true });
 }
 
 export async function getLastFocusedWindow() {
@@ -99,6 +31,10 @@ export async function getLastFocusedWindow() {
 
 export async function createEmptyWindow() {
 	return await chrome.windows.create({ focused: true });
+}
+
+export async function createWindow(url: string | string[]) {
+	return await chrome.windows.create({ url });
 }
 
 export async function removeWindow(windowId: number) {

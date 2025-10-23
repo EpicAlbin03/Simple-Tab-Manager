@@ -1,4 +1,4 @@
-// See https://kit.svelte.dev/docs/types#app
+// See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
 	namespace App {
@@ -14,7 +14,7 @@ declare global {
 	};
 
 	type ChromeWindow = Omit<chrome.windows.Window, 'tabs'> & {
-		tabs?: Tab[];
+		tabs: Tab[];
 		name?: string;
 		color?: string;
 	};

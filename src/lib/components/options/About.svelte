@@ -1,40 +1,50 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import GithubLogo from 'svelte-radix/GithubLogo.svelte';
-	import Star from 'svelte-radix/Star.svelte';
-	import FormField from '$lib/components/options/FormField.svelte';
+	import * as Field from '$lib/components/ui/field/index.js';
 	import { getExtensionVersion } from '$lib/chrome/utils';
-	import { Separator } from '$lib/components/ui/separator/index.js';
+	import { Github, Star } from '@lucide/svelte';
+	import { iconProps } from '$lib/utils';
 </script>
 
 <Card.Root>
-	<Card.Content class="mt-4 space-y-2">
+	<Card.Content class="space-y-2">
 		<div class="flex flex-col gap-4">
-			<legend class="text-base font-medium">Extension</legend>
-			<FormField desc="Version">
+			<Field.Legend class="mb-0">Extension</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Version</Field.Label>
 				{#await getExtensionVersion() then version}
 					<span class="text-xs">{version}</span>
 				{/await}
-			</FormField>
-			<FormField desc="Github">
-				<Button href="/" variant="outline" size="icon">
-					<GithubLogo size="16" />
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Github</Field.Label>
+				<Button
+					href="https://github.com/EpicAlbin03/Simple-Tab-Manager"
+					target="_blank"
+					variant="outline"
+					size="icon"
+				>
+					<Github {...iconProps} />
 				</Button>
-			</FormField>
+			</Field.Field>
 
-			<Separator orientation="horizontal" class="my-2" />
-			<legend class="text-base font-medium">Support</legend>
-			<FormField desc="Rate the extension on Chrome Web Store">
+			<Field.Separator class="my-2" />
+
+			<Field.Legend class="mb-0">Support</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">
+					Rate us on the Chrome Web Store
+				</Field.Label>
 				<Button
 					href="https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc/reviews"
 					target="_blank"
 					variant="outline"
 					size="icon"
 				>
-					<Star size="16" />
+					<Star {...iconProps} />
 				</Button>
-			</FormField>
+			</Field.Field>
 		</div>
 	</Card.Content>
 </Card.Root>

@@ -3,7 +3,7 @@
 
 	type Props = {
 		desc: string;
-		children: Snippet<[]>;
+		children: Snippet;
 	};
 
 	let { desc, children }: Props = $props();
@@ -11,9 +11,9 @@
 
 <div class="flex items-center justify-between space-x-2">
 	<div class="space-y-0.5">
-		<p class="text-[0.8rem] text-muted-foreground">
+		<p class="text-sm text-muted-foreground">
 			{@html desc}
 		</p>
 	</div>
-	{@render children()}
+	{@render children?.()}
 </div>

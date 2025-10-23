@@ -1,18 +1,14 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import * as Card from '$lib/components/ui/card';
-	import Plus from 'svelte-radix/Plus.svelte';
-	import CaretSort from 'svelte-radix/CaretSort.svelte';
-	import CaretUp from 'svelte-radix/CaretUp.svelte';
-	import CaretDown from 'svelte-radix/CaretDown.svelte';
-	import Cross2 from 'svelte-radix/Cross2.svelte';
 	import Sortable from './Sortable.svelte';
-	import { createEmptyTab, quickSort } from '$lib/chrome/tabs';
-	import { minimizeWindow, removeWindow } from '$lib/chrome/windows';
-	import EditWindow from './EditWindow.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { getContext } from 'svelte';
-	import type { OptionsStore } from '$lib/stores.svelte';
+	import { Plus, ChevronUp, ChevronDown, X, ArrowUpAZ, ArrowDownZA } from '@lucide/svelte';
+	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
+	import { minimizeWindow, removeWindow } from '$lib/chrome/windows';
+	import { createEmptyTab, quickSort } from '$lib/chrome/tabs';
+	import EditWindow from './EditWindow.svelte';
+	import { iconProps } from '$lib/utils';
 
 	type Props = {
 		window: ChromeWindow;
@@ -22,15 +18,14 @@
 	let { window, i }: Props = $props();
 
 	let minimized = $derived(window.state === 'minimized');
-	// TODO: highlight focused window
 
-	const optionsStore: OptionsStore = getContext('optionsStore');
-	const { sortByUrl, sortDescending } = $derived(optionsStore.options);
-	const sortingOption = $derived(sortByUrl ? 'url' : 'title');
+	const optionStore: OptionStore = OptionStoreContext.get();
+	const options = $derived(optionStore.options);
+	const sortingOption = $derived(options.sortByUrl ? 'url' : 'title');
 </script>
 
 <Card.Root
-	class={`h-fit w-full max-w-xs ${window.focused ? '' : ''}`}
+	class="h-fit w-full max-w-xs gap-0 bg-background py-0"
 	style={window.color ? `border-color: hsl(${window.color})` : ''}
 >
 	<Card.Header class="flex flex-row items-center gap-2 space-y-0 p-4">
@@ -39,9 +34,7 @@
 				<Card.Title class="max-w-36 truncate text-base">{window.name}</Card.Title>
 
 				<div class="flex gap-0">
-					{#key window.name || window.color}
-						<EditWindow {window} {i} />
-					{/key}
+					<EditWindow {window} {i} />
 
 					<Tooltip.Root>
 						<Tooltip.Trigger>
@@ -51,14 +44,23 @@
 									variant="ghost"
 									size="icon"
 									class="h-6 w-6"
-									onclick={async () => await quickSort(window, sortingOption, sortDescending)}
+									onclick={async () =>
+										await quickSort(window, sortingOption, options.sortDescending)}
 								>
-									<CaretSort size="16" />
+									{#if options.sortDescending}
+										<ArrowDownZA {...iconProps} />
+									{:else}
+										<ArrowUpAZ {...iconProps} />
+									{/if}
 								</Button>
 							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content>
-							<p>Quicksort</p>
+							{#if options.sortDescending}
+								<p>Sort Descending</p>
+							{:else}
+								<p>Sort Ascending</p>
+							{/if}
 						</Tooltip.Content>
 					</Tooltip.Root>
 
@@ -72,12 +74,12 @@
 									class="h-6 w-6"
 									onclick={async () => await createEmptyTab(window.id!)}
 								>
-									<Plus size="16" />
+									<Plus {...iconProps} />
 								</Button>
 							{/snippet}
 						</Tooltip.Trigger>
 						<Tooltip.Content>
-							<p>New tab</p>
+							<p>New Tab</p>
 						</Tooltip.Content>
 					</Tooltip.Root>
 				</div>
@@ -95,18 +97,18 @@
 								onclick={async () => await minimizeWindow(window.id!, !minimized)}
 							>
 								{#if minimized}
-									<CaretDown size="16" />
+									<ChevronDown {...iconProps} />
 								{:else}
-									<CaretUp size="16" />
+									<ChevronUp {...iconProps} />
 								{/if}
 							</Button>
 						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
 						{#if minimized}
-							<p>Maximize window</p>
+							<p>Maximize</p>
 						{:else}
-							<p>Minimize window</p>
+							<p>Minimize</p>
 						{/if}
 					</Tooltip.Content>
 				</Tooltip.Root>
@@ -121,12 +123,12 @@
 								class="h-6 w-6"
 								onclick={async () => await removeWindow(window.id!)}
 							>
-								<Cross2 size="16" />
+								<X {...iconProps} />
 							</Button>
 						{/snippet}
 					</Tooltip.Trigger>
 					<Tooltip.Content>
-						<p>Close window</p>
+						<p>Close</p>
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</div>
@@ -135,9 +137,7 @@
 
 	<Card.Content class={`!pt-0 ${!minimized ? 'p-4' : 'p-0'}`}>
 		{#if !minimized}
-			{#key window}
-				<Sortable {window} />
-			{/key}
+			<Sortable {window} />
 		{/if}
 	</Card.Content>
 </Card.Root>

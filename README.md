@@ -15,6 +15,14 @@
 </p>
 <br/>
 
+<p align="center">
+  <img src="screenshots.gif" alt="App demo" width="600">
+</p>
+
+## Installation
+
+[Chrome Web Store](https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc)
+
 ## Functionality
 
 ### Windows
@@ -40,10 +48,18 @@
 
 <br/>
 
-## TODO
+## Contributing
 
-- Firefox support
-- Implement tab groups
-- Add playwright tests
-- Potentially add the option to create an account to store windows across devices ([#1](https://github.com/EpicAlbin03/Simple-Tab-Manager/issues/1))
-- Potentially highlight focused window
+Make sure to replace `node_modules/sveltekit-adapter-chrome-extension/index.js`
+with my [updated version](https://github.com/EpicAlbin03/sveltekit-adapter-chrome-extension/blob/main/index.js) to correctly remove inline scripts when building.
+
+### TODO
+
+- Firefox support (MV2)
+- Tab groups
+- Custom keybinds
+- Playwright testing
+
+## License
+
+Licensed under the [MIT license](https://github.com/EpicAlbin03/Simple-Tab-Manager/blob/main/LICENSE.md).

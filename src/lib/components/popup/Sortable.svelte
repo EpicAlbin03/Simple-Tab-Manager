@@ -1,16 +1,12 @@
 <script lang="ts">
 	import Sortable from 'sortablejs';
 	import * as Sortablejs from 'sortablejs';
-	const { MultiDrag } = Sortablejs;
-	import { getContext } from 'svelte';
-	import { clearSelectedTabs, moveTabs } from '$lib/chrome/tabs';
-	import {
-		createLastClickedTabIndexStore,
-		windowsStore,
-		type OptionsStore
-	} from '$lib/stores.svelte';
-	import { isChromeExtension } from '$lib/chrome/utils';
 	import Tab from './Tab.svelte';
+	import { moveTabs } from '$lib/chrome/tabs';
+	import { onDestroy, onMount } from 'svelte';
+	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
+	import { createLastClickedTabIndexStore } from '$lib/stores/last-selected-tab-store.svelte';
+	const { MultiDrag } = Sortablejs;
 
 	type Props = {
 		window: ChromeWindow;
@@ -18,20 +14,21 @@
 
 	let { window }: Props = $props();
 	let tabs = $derived(window.tabs);
-	let sortableWindow = $state() as HTMLElement;
+	let sortableWindow = $state<HTMLElement>(null!);
+	let sortableInstance = $state<Sortable>(null!);
+
+	const optionStore: OptionStore = OptionStoreContext.get();
+	const options = $derived(optionStore.options);
+	let listView = $derived(options.tabView === 'list');
 
 	const lastClickedTabIndexStore = createLastClickedTabIndexStore();
 
-	const optionsStore: OptionsStore = getContext('optionsStore');
-	const { windowMaxHeight, tabView } = $derived(optionsStore.options);
-	let listView = $derived(tabView === 'list');
-
-	$effect(() => {
+	onMount(() => {
 		try {
 			Sortable.mount(new MultiDrag());
 		} catch (error) {}
 
-		const sortable = new Sortable(sortableWindow, {
+		sortableInstance = new Sortable(sortableWindow, {
 			group: 'shared',
 			animation: 150,
 			swapThreshold: 0.65,
@@ -44,27 +41,25 @@
 			scrollSensitivity: 50,
 			scrollSpeed: 10,
 			bubbleScroll: true,
-
 			onEnd: async (event) => {
-				if (isChromeExtension()) {
-					const { newIndex, oldIndex, newIndicies, oldIndicies, item, items, to, from } = event;
-					const windowId = parseInt(to.id);
+				const { newIndex, oldIndex, newIndicies, oldIndicies, item, items, to, from } = event;
+				const windowId = parseInt(to.id);
 
-					if (newIndex === undefined || oldIndex === undefined) return;
+				if (newIndex === undefined || oldIndex === undefined) return;
 
-					if (items.length <= 1) {
-						newIndicies.push({ multiDragElement: item, index: newIndex });
-						oldIndicies.push({ multiDragElement: item, index: oldIndex });
-						items.push(item);
-					}
-
-					await moveTabs(items, windowId, newIndicies, oldIndicies);
+				if (items.length <= 1) {
+					newIndicies.push({ multiDragElement: item, index: newIndex });
+					oldIndicies.push({ multiDragElement: item, index: oldIndex });
+					items.push(item);
 				}
 
-				clearSelectedTabs();
-				windowsStore.refreshWindows();
+				await moveTabs(items, windowId, newIndicies, oldIndicies);
 			}
 		});
+	});
+
+	onDestroy(() => {
+		sortableInstance?.destroy();
 	});
 </script>
 
@@ -72,13 +67,16 @@
 	<ul
 		bind:this={sortableWindow}
 		id={window.id.toString()}
-		class={`scrollable ${listView ? '' : 'flex flex-wrap'}`}
-		style={windowMaxHeight > 0 ? `max-height: ${windowMaxHeight}px; overflow-y: auto;` : ''}
+		data-testid={window.id.toString()}
+		class={`overflow-x-hidden ${listView ? '' : 'flex flex-wrap'} ${options.windowMaxHeight > 0 ? '' : 'overflow-y-hidden'}`}
+		style={options.windowMaxHeight > 0
+			? `max-height: ${options.windowMaxHeight}px; overflow-y: auto;`
+			: undefined}
 	>
 		{#if tabs}
-			{#each tabs as tab, i}
+			{#each tabs as tab, i (tab.id)}
 				{#if tab.id}
-					<li class="tab" id={tab.id.toString()}>
+					<li class="tab" id={tab.id.toString()} data-testid={tab.id.toString()}>
 						<Tab {tab} {i} {sortableWindow} {listView} {lastClickedTabIndexStore} />
 					</li>
 				{/if}

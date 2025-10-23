@@ -1,10 +1,16 @@
+playwright-report
+test-results
 node_modules
 
 # Output
+.vscode
 .output
 .vercel
+.netlify
+.wrangler
 /.svelte-kit
 /build
+*.zip
 
 # OS
 .DS_Store

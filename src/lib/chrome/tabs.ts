@@ -1,78 +1,5 @@
-import { extractURL, isChromeExtension } from './utils';
-import { windowsStore } from '$lib/stores.svelte';
 import type { SortableEvent } from 'sortablejs';
-import Sortable from 'sortablejs';
-
-//*-----------------------------------------------------------------------*//
-//*------------------------------- Events --------------------------------*//
-//*-----------------------------------------------------------------------*//
-export function addTabEventListeners() {
-	if (isChromeExtension()) {
-		chrome.tabs.onCreated.addListener(async (tab) => await createTabCallback(tab));
-		chrome.tabs.onRemoved.addListener(
-			async (tabId, { windowId }) => await removeTabCallback(windowId, tabId)
-		);
-		chrome.tabs.onUpdated.addListener(async (tabId) => await updateTabCallback(tabId));
-		chrome.tabs.onMoved.addListener(async (tabId) => await updateTabCallback(tabId));
-		// chrome.tabs.onAttached.addListener()
-		// chrome.tabs.onDetached.addListener()
-		// chrome.tabs.onReplaced.addListener()
-	}
-}
-
-export function removeTabEventListeners() {
-	if (isChromeExtension()) {
-		chrome.tabs.onCreated.removeListener(async (tab) => await createTabCallback(tab));
-		chrome.tabs.onRemoved.removeListener(
-			async (tabId, { windowId }) => await removeTabCallback(windowId, tabId)
-		);
-		chrome.tabs.onUpdated.removeListener(async (tabId) => await updateTabCallback(tabId));
-		chrome.tabs.onMoved.removeListener(async (tabId) => await updateTabCallback(tabId));
-		// chrome.tabs.onAttached.removeListener()
-		// chrome.tabs.onDetached.removeListener()
-		// chrome.tabs.onReplaced.removeListener()
-	}
-}
-
-async function createTabCallback(tab: ChromeTab) {
-	windowsStore.addTab(tab);
-	clearSelectedTabs();
-}
-
-async function removeTabCallback(windowId: number, tabId: number) {
-	windowsStore.removeTab(windowId, tabId);
-	clearSelectedTabs();
-}
-
-async function updateTabCallback(tabId: number) {
-	const tab = await getTab(tabId);
-	if (tab) windowsStore.updateTab(tab);
-	clearSelectedTabs();
-}
-
-//*-----------------------------------------------------------------------*//
-//*----------------------------- Functions -------------------------------*//
-//*-----------------------------------------------------------------------*//
-export function getSelectedTabs(windowId: number | undefined = undefined) {
-	if (windowId) {
-		const sortableWindow = document.getElementById(windowId.toString());
-		if (sortableWindow) {
-			return Array.from(sortableWindow.querySelectorAll('.sortable-selected')) as HTMLElement[];
-		}
-	} else {
-		return Array.from(document.querySelectorAll('.sortable-selected')) as HTMLElement[];
-	}
-
-	return [];
-}
-
-export function clearSelectedTabs(windowId: number | undefined = undefined) {
-	const selectedTabs = windowId ? getSelectedTabs(windowId) : getSelectedTabs();
-	selectedTabs.forEach((tab) => {
-		Sortable.utils.deselect(tab);
-	});
-	windowsStore.clearPressed(windowId);
-}
+import { extractURL } from './utils';
 
 export async function openTab(tabId: number, windowId: number) {
 	await chrome.windows.update(windowId, { focused: true });
@@ -91,31 +18,80 @@ export async function duplicateTab(url: string, index: number, pinned: boolean) 
 	return await chrome.tabs.create({ active: true, url, index, pinned });
 }
 
+export async function removeTab(tabId: number) {
+	return await chrome.tabs.remove(tabId);
+}
+
+export async function removeTabs(tabIds: number[]) {
+	const promises = tabIds.map((tabId) => removeTab(tabId));
+	return await Promise.all(promises);
+}
+
 export async function getTab(tabId: number) {
 	return await chrome.tabs.get(tabId);
+}
+
+export function getSelectedTabElements() {
+	return Array.from(document.querySelectorAll('.sortable-selected')) as HTMLElement[];
 }
 
 export async function queryTabs(queryInfo: chrome.tabs.QueryInfo = {}) {
 	return await chrome.tabs.query(queryInfo);
 }
 
+export async function pinTab(tabId: number, pinned: boolean) {
+	return await chrome.tabs.update(tabId, { pinned });
+}
+
+export async function pinTabs(tabIds: number[], pinned: boolean) {
+	const promises = tabIds.map((tabId) => pinTab(tabId, pinned));
+	return await Promise.all(promises);
+}
+
+export async function togglePinTabs(tabs: ChromeTab[]) {
+	const promises = tabs.map((tab) => pinTab(tab.id!, !tab.pinned));
+	return await Promise.all(promises);
+}
+
 export async function getPinnedTabs(windowId: number) {
 	return await chrome.tabs.query({ windowId, pinned: true });
+}
+
+export async function muteTab(tabId: number, muted: boolean) {
+	return await chrome.tabs.update(tabId, { muted });
+}
+
+export async function muteTabs(tabIds: number[], muted: boolean) {
+	const promises = tabIds.map((tabId) => muteTab(tabId, muted));
+	return await Promise.all(promises);
+}
+
+export async function toggleMuteTabs(tabs: ChromeTab[]) {
+	const promises = tabs.map((tab) => muteTab(tab.id!, !tab.mutedInfo?.muted));
+	return await Promise.all(promises);
+}
+
+export async function reloadTab(tabId: number) {
+	return await chrome.tabs.reload(tabId);
+}
+
+export async function moveTab(tabId: number, index: number, windowId: number) {
+	return await chrome.tabs.move(tabId, { index, windowId });
 }
 
 export async function moveTabs(
 	items: SortableEvent['items'],
 	windowId: number,
-	newIndices: SortableEvent['newIndicies'],
-	oldIndices: SortableEvent['oldIndicies']
+	newIndicies: SortableEvent['newIndicies'],
+	oldIndicies: SortableEvent['oldIndicies']
 ) {
-	const movingDown = newIndices[0].index > oldIndices[0].index;
+	const movingDown = newIndicies[0].index > oldIndicies[0].index;
 
 	const promises = items.map(async (item, i) => {
 		const tabId = parseInt(item.id);
 		const tab = await getTab(tabId);
 		if (!tab) return;
-		let newIndex = newIndices[i].index;
+		let newIndex = newIndicies[i].index;
 
 		const numPinnedTabs = (await getPinnedTabs(windowId)).length;
 
@@ -127,56 +103,14 @@ export async function moveTabs(
 			newIndex += items.length - i - 1;
 		}
 
-		await chrome.tabs.move(tabId, {
-			index: newIndex,
-			windowId
-		});
+		await moveTab(tabId, newIndex, windowId);
 
 		if (tab?.pinned && tab.windowId !== windowId) {
-			await chrome.tabs.update(tabId, { pinned: true });
-			await chrome.tabs.move(tabId, {
-				index: newIndex,
-				windowId
-			});
+			await pinTab(tabId, true);
+			await moveTab(tabId, newIndex, windowId);
 		}
 	});
 
-	return await Promise.all(promises);
-}
-
-export async function togglePinSelectedTabs() {
-	const selectedTabs = getSelectedTabs();
-	const tabIds = selectedTabs.map((tab) => parseInt(tab.id));
-	const promises = tabIds.map(async (tabId) => {
-		const tab = await getTab(tabId);
-		if (tab) return await chrome.tabs.update(tabId, { pinned: !tab.pinned });
-	});
-	return await Promise.all(promises);
-}
-
-export async function unPinTabs(tabIds: number[]) {
-	const promises = tabIds.map(async (tabId) => {
-		return await chrome.tabs.update(tabId, { pinned: false });
-	});
-	return await Promise.all(promises);
-}
-
-export async function muteSelectedTabs() {
-	const selectedTabs = getSelectedTabs();
-	const tabIds = selectedTabs.map((tab) => parseInt(tab.id));
-	const promises = tabIds.map(async (tabId) => {
-		const tab = await getTab(tabId);
-		if (tab) return await chrome.tabs.update(tabId, { muted: !tab.mutedInfo?.muted });
-	});
-	return await Promise.all(promises);
-}
-
-export async function removeSelectedTabs() {
-	const selectedTabs = getSelectedTabs();
-	const tabIds = selectedTabs.map((tab) => parseInt(tab.id));
-	const promises = tabIds.map(async (tabId) => {
-		return await chrome.tabs.remove(tabId);
-	});
 	return await Promise.all(promises);
 }
 
@@ -190,7 +124,7 @@ export async function quickSort(
 	const pinnedTabs = await getPinnedTabs(window.id);
 	const pinnedTabIds = pinnedTabs.map((tab) => tab.id!);
 
-	await Promise.all([Promise.resolve(pinnedTabs), unPinTabs(pinnedTabIds)]);
+	await Promise.all([Promise.resolve(pinnedTabs), pinTabs(pinnedTabIds, false)]);
 
 	const pinnedTabSet = new Set(pinnedTabIds);
 
@@ -208,15 +142,24 @@ export async function quickSort(
 		}
 	);
 
-	await Promise.all(
-		sortedTabs.map((tab, index) =>
-			chrome.tabs.move(tab.id!, { index }).then(() => console.log(tab.title))
-		)
-	);
+	await Promise.all(sortedTabs.map((tab, index) => chrome.tabs.move(tab.id!, { index })));
 
 	const tabsToPin = sortedTabs
 		.filter((tab) => pinnedTabSet.has(tab.id!))
 		.map((tab) => chrome.tabs.update(tab.id!, { pinned: true }));
 
 	await Promise.all(tabsToPin);
+}
+
+export function getSelectedTabsEl(windowId?: number) {
+	if (windowId) {
+		const sortableWindow = document.getElementById(windowId.toString());
+		if (sortableWindow) {
+			return Array.from(sortableWindow.querySelectorAll('.sortable-selected')) as HTMLLIElement[];
+		}
+	} else {
+		return Array.from(document.querySelectorAll('.sortable-selected')) as HTMLLIElement[];
+	}
+
+	return [];
 }

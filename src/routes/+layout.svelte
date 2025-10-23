@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { setContext, type Snippet } from 'svelte';
 	import '../app.css';
-	import type { LayoutData } from './$types';
-	import { createOptionsStore } from '$lib/stores.svelte';
-	import { setTheme } from '$lib/theme';
-	import { Toaster } from '$lib/components/ui/sonner';
+	import { ModeWatcher } from 'mode-watcher';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { WindowStore, WindowStoreContext } from '$lib/stores/window-store.svelte';
+	import { OptionStore, OptionStoreContext } from '$lib/stores/option-store.svelte';
 
-	const { children, data }: { children: Snippet<[]>; data: LayoutData } = $props();
-	const { options } = data;
-	setTheme(options.theme);
-	const optionsStore = createOptionsStore(options);
-	setContext('optionsStore', optionsStore);
-	const disableTooltips = $derived(optionsStore.options.disableTooltips);
+	let { children } = $props();
+
+	const windowStore = WindowStoreContext.set(new WindowStore());
+	const optionStore = OptionStoreContext.set(new OptionStore());
+	const options = $derived(optionStore.options);
 </script>
 
+<ModeWatcher />
 <Toaster duration={2000} />
-<Tooltip.Provider disabled={disableTooltips}>
-	{@render children()}
+<Tooltip.Provider disabled={options.disableTooltips}>
+	{@render children?.()}
 </Tooltip.Provider>

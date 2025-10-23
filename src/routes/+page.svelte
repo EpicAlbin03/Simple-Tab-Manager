@@ -1,40 +1,39 @@
 <script lang="ts">
-	import { addTabEventListeners, removeTabEventListeners } from '$lib/chrome/tabs';
-	import { addWindowEventListeners, removeWindowEventListeners } from '$lib/chrome/windows';
+	import { WindowStore, WindowStoreContext } from '$lib/stores/window-store.svelte';
+	import Window from '$lib/components/popup/Window.svelte';
+	import { onMount } from 'svelte';
 	import BottomNav from '$lib/components/popup/BottomNav.svelte';
 	import TopNav from '$lib/components/popup/TopNav.svelte';
-	import Window from '$lib/components/popup/Window.svelte';
-	import { windowsStore } from '$lib/stores.svelte';
+	import { Spinner } from '$lib/components/ui/spinner/index.js';
+	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 
-	$effect(() => {
-		addWindowEventListeners();
-		addTabEventListeners();
+	const windowStore: WindowStore = WindowStoreContext.get();
+
+	onMount(() => {
+		windowStore.addListeners();
 
 		return () => {
-			removeWindowEventListeners();
-			removeTabEventListeners();
+			windowStore.removeListeners();
 		};
 	});
 </script>
 
-{#if typeof window !== 'undefined'}
-	{#await windowsStore.refreshWindows()}
-		<p>loading...</p>
-	{:then windows}
-		<div class="flex h-full w-full flex-col justify-between bg-muted/40">
-			<TopNav />
+<div class="flex h-full w-full flex-col bg-muted/40">
+	<TopNav />
 
-			<div class="scrollable h-full overflow-auto p-2">
-				<div class="flex flex-wrap gap-2">
-					{#each windowsStore.windows as window, i}
+	<div class="flex-1 overflow-hidden">
+		<ScrollArea class="flex h-full flex-wrap gap-2 p-2">
+			<div class="flex flex-wrap gap-2">
+				{#if windowStore.isLoading}
+					<Spinner />
+				{:else}
+					{#each windowStore.windows as window, i (window.id)}
 						<Window {window} {i} />
 					{/each}
-				</div>
+				{/if}
 			</div>
+		</ScrollArea>
+	</div>
 
-			<BottomNav />
-		</div>
-	{:catch error}
-		<p>error</p>
-	{/await}
-{/if}
+	<BottomNav />
+</div>

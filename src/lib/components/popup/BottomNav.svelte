@@ -1,54 +1,39 @@
 <script lang="ts">
-	import Grid from 'svelte-radix/Grid.svelte';
-	import ListBullet from 'svelte-radix/ListBullet.svelte';
-	import Trash from 'svelte-radix/Trash.svelte';
-	import Plus from 'svelte-radix/Plus.svelte';
-	import Bookmark from 'svelte-radix/Bookmark.svelte';
-	import SpeakerOff from 'svelte-radix/SpeakerOff.svelte';
-	import DrawingPin from 'svelte-radix/DrawingPin.svelte';
-	import Search from '$lib/components/popup/Search.svelte';
+	import { VolumeX, Pin, Plus, Bookmark, LayoutGrid, LayoutList, Trash2 } from '@lucide/svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { getContext } from 'svelte';
 	import { createEmptyWindow } from '$lib/chrome/windows';
-	import type { OptionsStore } from '$lib/stores.svelte';
-	import {
-		createTab,
-		getSelectedTabs,
-		muteSelectedTabs,
-		togglePinSelectedTabs,
-		removeSelectedTabs
-	} from '$lib/chrome/tabs';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import {
-		onBookmarkManager,
-		onCloseTabs,
-		onMuteTabs,
-		onNewWindow,
-		onPinTabs
-	} from '$lib/shortcuts';
+	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
+	import { createTab, removeTabs, toggleMuteTabs, togglePinTabs } from '$lib/chrome/tabs';
+	import { WindowStoreContext, type WindowStore } from '$lib/stores/window-store.svelte';
+	import Searchbar from './SearchBar.svelte';
+	import { iconProps } from '$lib/utils';
+	import { shortcut } from '$lib/actions/shortcut.svelte';
 
-	const optionsStore: OptionsStore = getContext('optionsStore');
-	let tabView = $state(optionsStore.options.tabView);
-
-	$effect(() => {
-		document.addEventListener('keydown', onNewWindow);
-		document.addEventListener('keydown', onBookmarkManager);
-		document.addEventListener('keydown', onMuteTabs);
-		document.addEventListener('keydown', onPinTabs);
-		document.addEventListener('keydown', onCloseTabs);
-
-		return () => {
-			document.removeEventListener('keydown', onNewWindow);
-			document.removeEventListener('keydown', onBookmarkManager);
-			document.removeEventListener('keydown', onMuteTabs);
-			document.removeEventListener('keydown', onPinTabs);
-			document.removeEventListener('keydown', onCloseTabs);
-		};
-	});
+	const windowStore: WindowStore = WindowStoreContext.get();
+	const optionStore: OptionStore = OptionStoreContext.get();
+	const options = $derived(optionStore.options);
+	const pressedTabs = $derived(windowStore.getPressedTabs());
+	const pressedTabIds = $derived(pressedTabs.map((tab) => tab.id!));
 </script>
 
-<div class="flex items-center justify-between border-t bg-background p-1">
-	<Search />
+<svelte:window
+	use:shortcut={[
+		{ key: 'n', ctrl: true, callback: async () => await createEmptyWindow() },
+		{ key: 'b', ctrl: true, callback: async () => await createTab('chrome://bookmarks/') },
+		{ key: 'm', ctrl: true, shift: true, callback: async () => await toggleMuteTabs(pressedTabs) },
+		{ key: 'p', ctrl: true, shift: true, callback: async () => await togglePinTabs(pressedTabs) },
+		{
+			key: 'delete',
+			ctrl: true,
+			shift: true,
+			callback: async () => await removeTabs(pressedTabIds)
+		}
+	]}
+/>
+
+<div class="flex items-center justify-between border-t bg-background p-2">
+	<Searchbar />
 
 	<div class="flex gap-1">
 		<Tooltip.Root>
@@ -60,7 +45,7 @@
 						size="icon"
 						onclick={async () => await createEmptyWindow()}
 					>
-						<Plus size="16" />
+						<Plus {...iconProps} />
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
@@ -78,7 +63,7 @@
 						size="icon"
 						onclick={async () => await createTab('chrome://bookmarks/')}
 					>
-						<Bookmark size="16" />
+						<Bookmark {...iconProps} />
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
@@ -94,14 +79,14 @@
 						{...props}
 						variant="ghost"
 						size="icon"
-						onclick={async () => await muteSelectedTabs()}
+						onclick={async () => await toggleMuteTabs(pressedTabs)}
 					>
-						<SpeakerOff size="16" />
+						<VolumeX {...iconProps} />
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Mute ({getSelectedTabs().length}) Tabs</p>
+				<p>Toggle Mute ({pressedTabs.length}) Tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -112,14 +97,14 @@
 						{...props}
 						variant="ghost"
 						size="icon"
-						onclick={async () => await togglePinSelectedTabs()}
+						onclick={async () => await togglePinTabs(pressedTabs)}
 					>
-						<DrawingPin size="16" />
+						<Pin {...iconProps} />
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Pin ({getSelectedTabs().length}) Tabs</p>
+				<p>Toggle Pin ({pressedTabs.length}) Tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -130,14 +115,14 @@
 						{...props}
 						variant="ghost"
 						size="icon"
-						onclick={async () => await removeSelectedTabs()}
+						onclick={async () => await removeTabs(pressedTabIds)}
 					>
-						<Trash size="16" />
+						<Trash2 {...iconProps} />
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				<p>Close ({getSelectedTabs().length}) Tabs</p>
+				<p>Close ({pressedTabs.length}) Tabs</p>
 			</Tooltip.Content>
 		</Tooltip.Root>
 
@@ -149,20 +134,21 @@
 						variant="ghost"
 						size="icon"
 						onclick={async () => {
-							tabView = tabView === 'list' ? 'grid' : 'list';
-							optionsStore.updateOptions({ tabView });
+							await optionStore.updateOptions({
+								tabView: options.tabView === 'list' ? 'grid' : 'list'
+							});
 						}}
 					>
-						{#if tabView === 'list'}
-							<ListBullet size="16" />
+						{#if options.tabView === 'list'}
+							<LayoutList {...iconProps} />
 						{:else}
-							<Grid size="16" />
+							<LayoutGrid {...iconProps} />
 						{/if}
 					</Button>
 				{/snippet}
 			</Tooltip.Trigger>
 			<Tooltip.Content>
-				{#if tabView === 'list'}
+				{#if options.tabView === 'list'}
 					<p>Grid View</p>
 				{:else}
 					<p>List View</p>

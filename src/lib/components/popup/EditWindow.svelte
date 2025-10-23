@@ -4,12 +4,11 @@
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
-	import { cn } from '$lib/utils';
-	import Pencil2 from 'svelte-radix/Pencil2.svelte';
+	import { cn, iconProps } from '$lib/utils';
 	import * as RadioGroup from '$lib/components/ui/radio-group/index.js';
-	import { windowsStore } from '$lib/stores.svelte';
 	import { setSessionStorageItem } from '$lib/chrome/storage';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { SquarePen } from '@lucide/svelte';
 
 	type Props = {
 		window: ChromeWindow;
@@ -25,19 +24,21 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Trigger class={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'h-6 w-6')}>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				{#snippet child({ props })}
-					<Button {...props} variant="ghost" size="icon" class="h-6 w-6">
-						<Pencil2 size="16" />
-					</Button>
-				{/snippet}
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p class="font-normal">Edit window</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+	<Dialog.Trigger>
+		{#snippet child({ props })}
+			<Tooltip.Root>
+				<Tooltip.Trigger {...props}>
+					{#snippet child({ props })}
+						<Button {...props} variant="ghost" size="icon" class="h-6 w-6">
+							<SquarePen {...iconProps} />
+						</Button>
+					{/snippet}
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p class="font-normal">Edit</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		{/snippet}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
@@ -53,7 +54,7 @@
 			<div class="grid w-full max-w-sm items-center gap-4">
 				<Label for="color">Border color</Label>
 				<RadioGroup.Root bind:value={color}>
-					<div class="scrollable flex h-48 w-full flex-col gap-2 overflow-y-scroll">
+					<div class="flex h-48 w-full flex-col gap-2 overflow-y-scroll">
 						<div>
 							<div class="flex items-center space-x-2">
 								<RadioGroup.Item value="default" id="default" class="h-6 w-6" />
@@ -86,15 +87,14 @@
 		<Dialog.Footer>
 			<Button
 				onclick={async () => {
-					windowsStore.windows[i].name = name;
-					windowsStore.windows[i].color = color;
-					await setSessionStorageItem(
-						`window-${windowsStore.windows[i].id}`,
-						JSON.stringify({ name, color })
-					);
+					window.name = name;
+					window.color = color;
+					await setSessionStorageItem(`window-${window.id}`, JSON.stringify({ name, color }));
 					open = false;
-				}}>Save</Button
+				}}
 			>
+				Save
+			</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

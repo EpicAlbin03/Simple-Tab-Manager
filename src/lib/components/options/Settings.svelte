@@ -1,71 +1,84 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import Reset from 'svelte-radix/Reset.svelte';
 	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import FormField from '$lib/components/options/FormField.svelte';
-	import type { OptionsStore } from '$lib/stores.svelte';
-	import { getContext } from 'svelte';
-	import { defaultSettings } from '$lib/chrome/storage';
+	import * as Field from '$lib/components/ui/field/index.js';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
 	import { toast } from 'svelte-sonner';
+	import { OptionStoreContext, type OptionStore } from '$lib/stores/option-store.svelte';
+	import { RotateCcw } from '@lucide/svelte';
+	import { iconProps } from '$lib/utils';
+	import NumberInput from '$lib/components/ui/NumberInput.svelte';
 
-	const optionsStore: OptionsStore = getContext('optionsStore');
+	const optionStore: OptionStore = OptionStoreContext.get();
+	const options = $derived(optionStore.options);
 
-	let windowMaxHeight = $state(optionsStore.options.windowMaxHeight);
-	let showTabUrl = $state(optionsStore.options.showTabUrl);
-	let sortByUrl = $state(optionsStore.options.sortByUrl);
-	let sortDescending = $state(optionsStore.options.sortDescending);
-	let disableTooltips = $state(optionsStore.options.disableTooltips);
-	let truncateTabTitle = $state(optionsStore.options.truncateTabTitle);
+	let windowMaxHeight = $derived(options.windowMaxHeight);
+	let showTabUrl = $derived(options.showTabUrl);
+	let sortByUrl = $derived(options.sortByUrl);
+	let sortDescending = $derived(options.sortDescending);
+	let disableTooltips = $derived(options.disableTooltips);
+	let truncateTabTitle = $derived(options.truncateTabTitle);
+
+	let alertDialogOpen = $state(false);
 </script>
 
-<Card.Root>
-	<Card.Content class="mt-4 space-y-2">
+<Card.Root class="px-6">
+	<Card.Content class="space-y-2 px-0">
 		<div class="flex flex-col gap-4">
-			<legend class="text-base font-medium">Window</legend>
-			<FormField desc="Max window height before scroll (px) <br> 1 row = 32px, default = 0">
-				<Input
-					type="number"
-					min="0"
-					max="9999"
-					step="32"
-					class="max-w-20"
-					bind:value={windowMaxHeight}
-				/>
-			</FormField>
-			<FormField desc="Show tab url instead of title">
+			<Field.Legend class="mb-0">Window</Field.Legend>
+			<Field.Field>
+				<div class="flex justify-between">
+					<Field.Label class="text-sm text-muted-foreground">
+						Max window height before showing scrollbar (px)
+					</Field.Label>
+					<NumberInput bind:value={windowMaxHeight} class="w-56" />
+				</div>
+				<Field.Description class="ml-auto">0 = infinite height / no scrollbar</Field.Description>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">
+					Show tab url instead of title
+				</Field.Label>
 				<Switch bind:checked={showTabUrl} />
-			</FormField>
-			<FormField desc="Truncate tab title or url">
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Truncate tab title/url</Field.Label>
 				<Switch bind:checked={truncateTabTitle} />
-			</FormField>
+			</Field.Field>
 
-			<Separator orientation="horizontal" class="my-2" />
-			<legend class="text-base font-medium">Quicksort</legend>
-			<FormField desc="Sort by url instead of title">
+			<Field.Separator class="my-2" />
+
+			<Field.Legend class="mb-0">Sorting</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">
+					Sort by url instead of title
+				</Field.Label>
 				<Switch bind:checked={sortByUrl} />
-			</FormField>
-			<FormField desc="Descending order">
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Sort by descending order</Field.Label>
 				<Switch bind:checked={sortDescending} />
-			</FormField>
+			</Field.Field>
 
-			<Separator orientation="horizontal" class="my-2" />
-			<legend class="text-base font-medium">Tooltips</legend>
-			<FormField desc="Disable tooltips">
+			<Field.Separator class="my-2" />
+
+			<Field.Legend class="mb-0">Tooltips</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Disable tooltips</Field.Label>
 				<Switch bind:checked={disableTooltips} />
-			</FormField>
+			</Field.Field>
 		</div>
 	</Card.Content>
 
-	<Card.Footer class="flex justify-between">
-		<AlertDialog.Root>
+	<Field.Separator class="my-2" />
+
+	<Card.Footer class="flex justify-between px-0">
+		<AlertDialog.Root bind:open={alertDialogOpen}>
 			<AlertDialog.Trigger>
 				{#snippet child({ props })}
 					<Button {...props} variant="destructive">
-						<Reset size="16" class="mr-2" />
+						<RotateCcw {...iconProps} />
 						Reset
 					</Button>
 				{/snippet}
@@ -84,17 +97,13 @@
 							<Button
 								{...props}
 								variant="destructive"
+								class="text-primary-foreground dark:text-foreground"
 								onclick={async () => {
-									windowMaxHeight = defaultSettings.windowMaxHeight;
-									showTabUrl = defaultSettings.showTabUrl;
-									sortByUrl = defaultSettings.sortByUrl;
-									sortDescending = defaultSettings.sortDescending;
-									disableTooltips = defaultSettings.disableTooltips;
-									truncateTabTitle = defaultSettings.truncateTabTitle;
-									optionsStore.updateOptions(defaultSettings);
+									await optionStore.resetOptions();
+									alertDialogOpen = false;
 								}}
 							>
-								<Reset size="16" class="mr-2" />
+								<RotateCcw {...iconProps} />
 								Reset
 							</Button>
 						{/snippet}
@@ -105,7 +114,7 @@
 
 		<Button
 			onclick={async () => {
-				optionsStore.updateOptions({
+				await optionStore.updateOptions({
 					windowMaxHeight,
 					showTabUrl,
 					sortByUrl,
@@ -114,7 +123,9 @@
 					truncateTabTitle
 				});
 				toast.success('Settings saved');
-			}}>Save</Button
+			}}
 		>
+			Save
+		</Button>
 	</Card.Footer>
 </Card.Root>

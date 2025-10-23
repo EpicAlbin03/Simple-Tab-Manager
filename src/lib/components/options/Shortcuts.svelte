@@ -1,50 +1,105 @@
 <script lang="ts">
 	import * as Card from '$lib/components/ui/card/index.js';
-	import { Separator } from '$lib/components/ui/separator/index.js';
-	import FormField from '$lib/components/options/FormField.svelte';
-	import Kbd from '$lib/components/options/Kbd.svelte';
+	import * as Field from '$lib/components/ui/field/index.js';
+	import * as Kbd from '$lib/components/ui/kbd/index.js';
 </script>
 
 <Card.Root>
-	<Card.Content class="mt-4 space-y-2">
+	<Card.Content class="space-y-2">
 		<div class="flex flex-col gap-4">
-			<legend class="text-base font-medium">Window</legend>
-			<FormField desc="Select tab">
-				<Kbd>CLICK</Kbd>
-			</FormField>
-			<FormField desc="Select multiple tabs">
-				<Kbd>SHIFT + CLICK</Kbd>
-			</FormField>
-			<FormField desc="Open tab">
-				<Kbd><span class="text-xs">⌘</span>+ CLICK</Kbd>
-			</FormField>
+			<Field.Legend class="mb-0">Window</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Select tab</Field.Label>
+				<Kbd.Root>CLICK</Kbd.Root>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Select multiple tabs</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⇧</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>CLICK</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Open tab</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>CLICK</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
 
-			<Separator orientation="horizontal" class="my-2" />
-			<legend class="text-base font-medium">Top Navigation</legend>
-			<FormField desc="Export windows">
-				<Kbd><span class="text-xs">⌘</span>+ SHIFT + S</Kbd>
-			</FormField>
+			<Field.Separator class="my-2" />
 
-			<Separator orientation="horizontal" class="my-2" />
-			<legend class="text-base font-medium">Bottom Navigation</legend>
-			<FormField desc="Focus search bar">
-				<Kbd><span class="text-xs">⌘</span>+ K</Kbd>
-			</FormField>
-			<FormField desc="Open new window">
-				<Kbd><span class="text-xs">⌘</span>+ N</Kbd>
-			</FormField>
-			<FormField desc="Open bookmark manager">
-				<Kbd><span class="text-xs">⌘</span>+ B</Kbd>
-			</FormField>
-			<FormField desc="Mute selected tabs">
-				<Kbd><span class="text-xs">⌘</span>+ SHIFT + M</Kbd>
-			</FormField>
-			<FormField desc="Pin selected tabs">
-				<Kbd><span class="text-xs">⌘</span>+ SHIFT + P</Kbd>
-			</FormField>
-			<FormField desc="Close selected tabs">
-				<Kbd><span class="text-xs">⌘</span>+ SHIFT + DEL</Kbd>
-			</FormField>
+			<Field.Legend class="mb-0">Top Navigation</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Export windows</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>⇧</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>S</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+
+			<Field.Separator class="my-2" />
+
+			<Field.Legend class="mb-0">Bottom Navigation</Field.Legend>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Focus search bar</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>K</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Open new window</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>N</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Open bookmark manager</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>B</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Mute selected tabs</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>⇧</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>M</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Pin selected tabs</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>⇧</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>P</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
+			<Field.Field orientation="horizontal" class="justify-between">
+				<Field.Label class="text-sm text-muted-foreground">Close selected tabs</Field.Label>
+				<Kbd.Group>
+					<Kbd.Root>⌘</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>⇧</Kbd.Root>
+					<span>+</span>
+					<Kbd.Root>⌫</Kbd.Root>
+				</Kbd.Group>
+			</Field.Field>
 		</div>
 	</Card.Content>
 </Card.Root>
