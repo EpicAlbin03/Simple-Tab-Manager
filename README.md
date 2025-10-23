@@ -15,7 +15,11 @@
 </p>
 <br/>
 
-## Extension
+<p align="center">
+  <img src="screenshots.gif" alt="App demo" width="600">
+</p>
+
+## Installation
 
 [Chrome Web Store](https://chromewebstore.google.com/detail/simple-tab-manager/mdfbfcbfcohpbdicnpdpcdioggfdddlc)
 
@@ -55,3 +59,7 @@ with my [updated version](https://github.com/EpicAlbin03/sveltekit-adapter-chrom
 - Tab groups
 - Custom keybinds
 - Playwright testing
+
+## License
+
+Licensed under the [MIT license](https://github.com/EpicAlbin03/Simple-Tab-Manager/blob/main/LICENSE.md).
